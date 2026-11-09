@@ -85,12 +85,7 @@ function walk(dir, base, out) {
 }
 
 async function ensureDir(dir) {
-  const parts = dir.split('/').filter(Boolean);
-  let cur = '';
-  for (const seg of parts) {
-    cur += '/' + seg;
-    try { await php.mkdir(cur); } catch (_) { /* already there */ }
-  }
+  try { php.mkdirTree(dir); } catch (_) { /* already there */ }
 }
 
 async function uploadFile(rel) {
@@ -125,7 +120,7 @@ async function syncBack() {
   for (const name of DATA_FILES) {
     let data;
     try {
-      data = Buffer.from(await php.readFile(APP + '/' + name));
+      data = Buffer.from(php.readFileAsBuffer(APP + '/' + name));
     } catch (_) {
       continue; // ما كاينش
     }
