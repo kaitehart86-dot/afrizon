@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f1e35">
+<title>Performance — AfrizoN CRM</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="pv-icon-192.png">
+<style>
+:root{
+  --bg:#eef1f5; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e5e7eb;
+  --navy:#0f1e35; --navy-2:#152a47; --soft:#f8fafc;
+  --green:#16a34a; --green-soft:#dcfce7; --red:#dc2626; --red-soft:#fee2e2;
+  --amber:#d97706; --amber-soft:#fef3c7; --blue:#2563eb; --blue-soft:#dbeafe;
+  --violet:#7c3aed; --violet-soft:#ede9fe; --teal:#0d9488; --teal-soft:#ccfbf1;
+  --shadow:0 1px 2px rgba(15,23,42,.05), 0 8px 24px -16px rgba(15,23,42,.25);
+  --r:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans Arabic",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+body.embedded{padding-bottom:40px}
+a{color:inherit}
+.wrap{max-width:1560px;margin:0 auto;padding:20px 22px 60px}
+.hide{display:none !important}
+
+/* ── header ─────────────────────────────────────────────── */
+.head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.head h1{font-size:26px;font-weight:800;margin:0 0 4px;letter-spacing:-.02em}
+.head .sub{color:var(--muted);font-size:12.5px;margin:0}
+.head .who{color:var(--muted);font-size:11.5px;margin-top:2px}
+.toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:11px;padding:3px;gap:2px;box-shadow:var(--shadow)}
+.seg button{
+  border:0;background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:12px;
+  padding:7px 12px;border-radius:8px;cursor:pointer;white-space:nowrap;
+}
+.seg button:hover{background:var(--soft);color:var(--text)}
+.seg button.on{background:var(--navy);color:#fff}
+#periods #customBtn{display:inline-flex;align-items:center;gap:5px}
+.sel,.inp{
+  background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--text);
+  font:inherit;font-size:12px;font-weight:600;box-shadow:var(--shadow);outline:none;min-height:38px;
+}
+.sel:focus,.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:8px 12px;font:inherit;font-weight:700;font-size:12px;color:var(--text);
+  cursor:pointer;box-shadow:var(--shadow);
+}
+.btn:hover{border-color:#cbd5e1}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.ghost{background:transparent;box-shadow:none}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted);
+  background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px var(--green-soft)}
+.dot.warn{background:var(--red);box-shadow:0 0 0 3px var(--red-soft)}
+
+/* ── barre de période personnalisée ─────────────────────── */
+.custombar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  background:var(--card);border:1px solid var(--line);border-radius:12px;
+  padding:9px 12px;box-shadow:var(--shadow);margin:-6px 0 12px;
+}
+.custombar .cb-lab{font-size:11.5px;font-weight:800;color:var(--text);letter-spacing:.01em}
+.custombar .cb-arrow{color:var(--muted);font-weight:800;font-size:12px}
+.custombar .cb-note{font-size:10.5px;color:var(--muted);margin-inline-start:auto}
+.custombar .inp{min-height:34px;padding:5px 9px}
+@media(max-width:900px){.custombar .cb-note{margin-inline-start:0}}
+
+/* ── cards & sections ───────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.sec{margin-top:16px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px}
+.sec-title{font-size:15.5px;font-weight:800;margin:0}
+.sec-sub{color:var(--muted);font-size:11.5px;margin:2px 0 0}
+.banner{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--navy);color:#fff;border-radius:14px 14px 0 0;padding:12px 16px;
+}
+.banner .t{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
+.banner .s{font-size:11px;opacity:.7;margin-top:2px}
+.banner .ico{
+  width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.12);
+  display:grid;place-items:center;font-size:14px;
+}
+.banner + .card-body{border-radius:0 0 var(--r) var(--r)}
+
+/* ── KPI ────────────────────────────────────────────────── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(188px,1fr));gap:10px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 13px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi .lab{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
+.kpi .val{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:3px;font-variant-numeric:tabular-nums;
+  display:flex;align-items:baseline;gap:6px;flex-wrap:nowrap;white-space:nowrap}
+.kpi.money .val{font-size:16.5px}
+.kpi .val .txt{overflow:hidden;text-overflow:ellipsis}
+.kpi .sub{font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi .rule{font-size:9.5px;color:var(--muted);margin-top:5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
+.kpi .bar{height:4px;border-radius:99px;background:var(--line);margin-top:9px;overflow:hidden}
+.kpi .bar i{display:block;height:100%;border-radius:99px;background:var(--blue)}
+.kpi.green .val{color:var(--green)} .kpi.green .bar i{background:var(--green)}
+.kpi.red .val{color:var(--red)} .kpi.red .bar i{background:var(--red)}
+.kpi.amber .val{color:var(--amber)} .kpi.amber .bar i{background:var(--amber)}
+.kpi.blue .val{color:var(--blue)} .kpi.blue .bar i{background:var(--blue)}
+.kpi.violet .val{color:var(--violet)} .kpi.violet .bar i{background:var(--violet)}
+.kpi.teal .val{color:var(--teal)} .kpi.teal .bar i{background:var(--teal)}
+.kpi.navy{background:var(--navy);border-color:var(--navy);color:#fff}
+.kpi.navy .lab,.kpi.navy .sub,.kpi.navy .rule{color:rgba(255,255,255,.66)}
+.delta{font-size:10px;font-weight:800;padding:2px 5px;border-radius:6px;flex:0 0 auto}
+.delta.up{color:var(--green);background:var(--green-soft)}
+.delta.dn{color:var(--red);background:var(--red-soft)}
+.crmtag{font-size:8px;font-weight:900;letter-spacing:.06em;padding:1px 4px;border-radius:4px;
+  background:var(--blue-soft);color:#1e40af;flex:0 0 auto}
+.calctag{font-size:8px;font-weight:900;letter-spacing:.06em;padding:1px 4px;border-radius:4px;
+  background:var(--violet-soft);color:#5b21b6;flex:0 0 auto}
+
+/* ── agent cards ────────────────────────────────────────── */
+.agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.ag{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+.ag-top{display:flex;align-items:flex-start;gap:10px}
+.rank{
+  width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800;
+  background:var(--amber-soft);color:#92400e;flex:0 0 auto;
+}
+.rank.r1{background:#fde68a;color:#78350f}
+.ag-name{font-weight:800;font-size:14px;line-height:1.2}
+.ag-meta{font-size:10.5px;color:var(--muted);margin-top:1px}
+.ag-rev{margin-left:auto;text-align:right}
+.ag-rev .l{font-size:9px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}
+.ag-rev .v{font-weight:800;font-size:13px}
+.rates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.rate{background:var(--soft);border-radius:10px;padding:8px 10px;border:1px solid var(--line)}
+.rate .l{font-size:10px;font-weight:800;color:var(--muted)}
+.rate .v{font-size:20px;font-weight:800;letter-spacing:-.02em;margin-top:1px}
+.rate.green .v{color:var(--green)} .rate.blue .v{color:var(--blue)}
+.rate .bar{height:4px;border-radius:99px;background:#e2e8f0;margin-top:6px;overflow:hidden}
+.rate .bar i{display:block;height:100%;border-radius:99px}
+.rate.green .bar i{background:var(--green)} .rate.blue .bar i{background:var(--blue)}
+.grp-lab{font-size:9.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tile{background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:7px 6px;text-align:center}
+.tile b{display:block;font-size:16px;font-weight:800;line-height:1.1}
+.tile span{font-size:9px;color:var(--muted);font-weight:700}
+.tile.g b{color:var(--green)} .tile.r b{color:var(--red)} .tile.a b{color:var(--amber)}
+.tile.b b{color:var(--blue)} .tile.v b{color:var(--violet)} .tile.t b{color:var(--teal)}
+.ag-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);font-size:10.5px;color:var(--muted)}
+.tag{font-weight:800;font-size:10px;padding:2px 7px;border-radius:999px}
+.tag.ok{background:var(--green-soft);color:#166534} .tag.mid{background:var(--amber-soft);color:#92400e}
+.tag.bad{background:var(--red-soft);color:#991b1b}
+
+/* ── tables ─────────────────────────────────────────────── */
+.tw{overflow:auto;border-radius:12px;border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{
+  position:sticky;top:0;background:var(--navy);color:#fff;text-align:left;padding:9px 10px;font-size:10px;
+  text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;z-index:2;font-weight:800;
+}
+tbody td{padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--soft)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+th.num{text-align:right}
+.name{font-weight:700}
+.mini{height:5px;border-radius:99px;background:#e2e8f0;overflow:hidden;min-width:54px}
+.mini i{display:block;height:100%;border-radius:99px;background:var(--green)}
+.badge{display:inline-block;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:800}
+.badge.ok{background:var(--green-soft);color:#166534}
+.badge.mid{background:var(--amber-soft);color:#92400e}
+.badge.bad{background:var(--red-soft);color:#991b1b}
+.badge.info{background:var(--blue-soft);color:#1e40af}
+
+/* ── parity / audit ─────────────────────────────────────── */
+.parity code,.rulecode{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;
+  background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 5px;color:var(--muted)}
+.parity td.ok{color:var(--green);font-weight:800}
+.parity td.ko{color:var(--red);font-weight:800}
+.audit{border-radius:var(--r);border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.audit .hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;background:var(--navy);color:#fff}
+.audit .bar .t{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
+.audit .hd .s{font-size:11px;opacity:.7;margin-top:2px}
+.audit .hd .t{font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.audit .hd .ico{width:28px;height:28px;border-radius:9px;background:rgba(255,255,255,.12);display:grid;place-items:center;font-size:14px;flex:0 0 auto}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:800;border-radius:999px;padding:4px 11px}
+.chip.ok{background:rgba(22,163,74,.18);color:#86efac;border:1px solid rgba(22,163,74,.35)}
+.chip.ko{background:rgba(220,38,38,.2);color:#fca5a5;border:1px solid rgba(220,38,38,.4)}
+
+/* ── charts ─────────────────────────────────────────────── */
+.chart{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:var(--shadow)}
+.chart h3{margin:0 0 2px;font-size:13.5px;font-weight:800}
+.chart p{margin:0 0 10px;font-size:11px;color:var(--muted)}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--muted);font-weight:700}
+.legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:5px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:1050px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ── funnel ─────────────────────────────────────────────── */
+.funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.fstep{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;position:relative;box-shadow:var(--shadow)}
+.fstep .l{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.fstep .v{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.fstep .b{height:5px;border-radius:99px;background:#e2e8f0;margin-top:8px;overflow:hidden}
+.fstep .b i{display:block;height:100%;border-radius:99px;background:var(--navy)}
+.fstep .p{font-size:10.5px;color:var(--muted);margin-top:5px;font-weight:700}
+@media(max-width:900px){.funnel{grid-template-columns:1fr 1fr}}
+
+/* ── empty / loader ─────────────────────────────────────── */
+.empty{padding:26px;text-align:center;color:var(--muted);font-size:12.5px}
+.loader{padding:60px 20px;text-align:center;color:var(--muted)}
+.spin{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--blue);border-radius:50%;
+  margin:0 auto 10px;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.note{font-size:10.5px;color:var(--muted);margin-top:7px}
+.err{background:var(--red-soft);color:#991b1b;border:1px solid #fecaca;border-radius:10px;padding:10px 12px;font-size:12px}
+</style>
+<!--PV-DARK-PAGES:BEGIN-->
+<link rel="stylesheet" href="pv-dark-pages.css" id="pv-dark-pages-css">
+<script id="pv-dark-pages-boot">(function(){try{
+var t=localStorage.getItem('pv_theme');
+var os=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
+}catch(e){}})();</script>
+<!--PV-DARK-PAGES:END-->
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <h1>Performance</h1>
+      <p class="sub">Bilan des agentes, des produits et des ventes — formules identiques au tableau de bord du CRM.</p>
+      <div class="who" id="who"></div>
+    </div>
+    <div class="toolbar">
+      <div class="seg" id="periods">
+        <button data-p="today">Aujourd'hui</button>
+        <button data-p="yesterday">Hier</button>
+        <button data-p="week">Cette semaine</button>
+        <button data-p="month">Ce mois</button>
+        <button data-p="30d">30 jours</button>
+        <button data-p="all">Tout</button>
+        <button data-p="custom" id="customBtn" title="Choisir deux dates entre deux dates"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Custom</button>
+      </div>
+      <select class="sel" id="agentSel"><option value="">Toutes les agentes</option></select>
+      <select class="sel" id="productSel"><option value="">Tous les produits</option></select>
+      <button class="btn" id="refresh" title="Recharger les données">⟳ Actualiser</button>
+      <button class="btn primary" id="export">⤓ Export CSV</button>
+    </div>
+  </div>
+
+
+  <div class="custombar" id="customWrap" style="display:none">
+    <span class="cb-lab">Période personnalisée</span>
+    <input class="inp" type="date" id="from" title="Du (début)">
+    <span class="cb-arrow">→</span>
+    <input class="inp" type="date" id="to" title="Au (fin)">
+    <button class="btn primary" id="applyCustom">Appliquer</button>
+    <span class="cb-note">Les deux dates sont incluses · mêmes règles de calcul que le CRM</span>
+  </div>
+
+  <div id="status" class="pill" style="margin-bottom:12px"><span class="dot"></span><span id="statusTxt">Chargement…</span></div>
+
+  <div id="app">
+    <div class="loader"><div class="spin"></div>Chargement des données…</div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════════
+   AfrizoN CRM — Page Performance (v2, alignée sur les calculs du CRM)
+   ─────────────────────────────────────────────────────────────────────────
+   Toutes les formules sont copiées à l'identique du CRM (index.html) :
+     • commandes « vivantes » seulement  : o._del n'est jamais compté
+     • Confirmé  : String(statut).trim() === "Confirmé"
+     • Ventes    : Σ Number(prix)        (sans × qte)
+     • Livrée    : livraison ∈ {Livrée, Rechange}
+     • Retour    : livraison ∈ {Retour, Remboursé}
+     • À contacter / Suivi / Prêt / Risque / Conversion : mêmes prédicats
+   Un bloc « Contrôle de cohérence » recalcule chaque indicateur avec un
+   second moteur (portage littéral du code du CRM) et affiche l'écart.
+   ══════════════════════════════════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  var TOKEN = '8c907fc0f4ffe0b9775a6b7c3c0fc7700e5724c0d78343df';
+  var API = 'api.php';
+  var EMBED = new URLSearchParams(location.search).get('embed') === '1';
+  if (EMBED) document.body.classList.add('embedded');
+
+  var $ = function (id) { return document.getElementById(id); };
+  var RAW = { orders: [], villes: {}, spend: [], users: [] };
+  var STATE = { period: 'month', from: '', to: '', agent: '', product: '' };
+  var actor = null;
+
+  /* ── أدوات ─────────────────────────────────────────────────────────── */
+  function session() {
+    try {
+      var id = localStorage.getItem('afrizon_session_v1');
+      var users = JSON.parse(localStorage.getItem('afrizon_users_v1') || '[]');
+      var u = users.find(function (x) { return String(x.id) === String(id) && !x._del; });
+      if (!u) return null;
+      return { id: String(u.id), name: u.username || u.agent || 'Utilisateur', role: u.role || 'user' };
+    } catch (e) { return null; }
+  }
+  function num(v) { var n = parseFloat(v); return isFinite(n) ? n : 0; }
+  function nf(n) { return (Math.round(n * 100) / 100).toLocaleString('fr-FR').replace(/\u202f|\u00a0/g, ' '); }
+  function money(n) { return nf(Math.round(n)) + ' DH'; }
+  function pct(a, b) { return b > 0 ? (a / b) * 100 : 0; }
+  function p1(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function d2(n) { return n < 10 ? '0' + n : '' + n; }
+  function iso(d) { return d.getFullYear() + '-' + d2(d.getMonth() + 1) + '-' + d2(d.getDate()); }
+  function parseDay(s) { var p = String(s || '').slice(0, 10).split('-'); return (p.length === 3) ? new Date(+p[0], +p[1] - 1, +p[2]) : null; }
+  function addDays(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+  function today() { var n = new Date(); return new Date(n.getFullYear(), n.getMonth(), n.getDate()); }
+
+  /* ── حدود الفترة (نفس منطق CRM: I4) ───────────────────────────────── */
+  function range() {
+    var t = today(), from, to;
+    switch (STATE.period) {
+      case 'today': from = to = t; break;
+      case 'yesterday': from = to = addDays(t, -1); break;
+      case 'week': { var f = (t.getDay() + 6) % 7; from = addDays(t, -f); to = t; break; }   /* الاثنين → اليوم */
+      case 'month': from = new Date(t.getFullYear(), t.getMonth(), 1); to = t; break;
+      case '30d': from = addDays(t, -29); to = t; break;
+      case 'custom':
+        from = STATE.from ? parseDay(STATE.from) : addDays(t, -29);
+        to = STATE.to ? parseDay(STATE.to) : t;
+        if (from > to) { var x = from; from = to; to = x; }
+        break;
+      default: return { from: null, to: null, key: 'all' };
+    }
+    return { from: from, to: to, key: STATE.period };
+  }
+  function prevRange(r) {
+    if (!r.from) return null;
+    var days = Math.round((r.to - r.from) / 86400000) + 1;
+    return { from: addDays(r.from, -days), to: addDays(r.to, -1) };
+  }
+  /* نفس inRange ديال CRM: مقارنة نصية على YYYY-MM-DD */
+  function inRange(dayStr, r) {
+    if (!r.from) return true;
+    var s = String(dayStr == null ? '' : dayStr).slice(0, 10);
+    if (!s) return false;
+    return s >= iso(r.from) && s <= iso(r.to);
+  }
+
+  /* ── تحميل ─────────────────────────────────────────────────────────── */
+  async function load() {
+    var r = await fetch(API + '?t=' + Date.now() + '&token=' + encodeURIComponent(TOKEN), {
+      cache: 'no-store', headers: { 'X-Sync-Token': TOKEN }
+    });
+    if (!r.ok) throw new Error('api.php → HTTP ' + r.status);
+    var snap = await r.json();
+    var g = function (k) { return snap[k] && snap[k].d; };
+
+    /* ⚠ مثل CRM: الطلبيات المحذوفة (_del) ما كتدخلش فحتى حساب */
+    RAW.orders = (g('afrizon_orders_v5') || [])
+      .filter(function (o) { return o && !o._del; })
+      .map(function (o) { return o; });
+    var villes = g('afrizon_villes_v2') || [];
+    RAW.villes = {};
+    villes.forEach(function (v) { if (v && v.nom) RAW.villes[String(v.nom).trim().toLowerCase()] = num(v.prix); });
+    RAW.spend = (g('afrizon_adspend_v1') || []).filter(function (x) { return x && !x._del; });
+    RAW.users = g('afrizon_users_v1') || [];
+    REDRAW();
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     1) تعريفات CRM — منقولة حرفياً من index.html
+     ══════════════════════════════════════════════════════════════════════ */
+  var DAY1 = 864e5;
+
+  function sStatut(o) { return String(o.statut == null ? '' : o.statut).trim(); }   /* CRM: String(statut??"").trim() */
+  function sLivr(o) { return o.livraison == null ? null : String(o.livraison); }   /* CRM: مقارنة مباشرة بلا trim */
+
+  function isConfirmed(o) { return sStatut(o) === 'Confirmé'; }                    /* isC */
+  function isCancelled(o) { return sStatut(o) === 'Annulé'; }
+  function isCall(o) { var t = sStatut(o); return t === '' || /^Appel/i.test(t); } /* __pvIsCall */
+  function ageMs(o) {                                                              /* __pvAge */
+    var d = Date.parse(String(o.dateCreation == null ? '' : o.dateCreation).slice(0, 10));
+    return isNaN(d) ? 0 : Date.now() - d;
+  }
+  function isSold(o) { var v = sLivr(o); return v === 'Livrée' || v === 'Rechange'; }        /* __pvSold */
+  function isBack(o) { var v = sLivr(o); return v === 'Retour' || v === 'Remboursé'; }        /* __pvBack */
+  function isTransit(o) { var v = sLivr(o); return v === 'Expédier vers' || v === 'Expédié'; }
+  function isShipped(o) { return isSold(o) || isBack(o) || isTransit(o); }
+  function noDelivery(o) { return sLivr(o) === ''; }                                          /* livraison === "" */
+  function price(o) { return Number(o.prix) || 0; }                                           /* Σ prix بلا qte */
+  function units(o) { return num(o.qte) || 1; }
+  function callTries(o) { var m = /^Appel-(\d+)$/i.exec(sStatut(o)); return m ? +m[1] : 0; }
+  function shipCost(o) {
+    var c = RAW.villes[String(o.ville == null ? '' : o.ville).trim().toLowerCase()];
+    return typeof c === 'number' ? c : 0;
+  }
+  function agentKey(o) { return String(o.agent == null ? '' : o.agent).trim() || 'Sans agente'; }
+  function productKey(o) { return String(o.produit == null ? '' : o.produit).trim() || '—'; }
+
+  /* بطاقات CRM: نفس __pvKPI */
+  var CRM_KPI = [
+    { k: 'call', lab: 'À contacter', f: function (o) { return isCall(o) && noDelivery(o); } },
+    { k: 'suivi', lab: 'Suivi nécessaire', f: function (o) { var t = sStatut(o); return t === 'Rappel' || t === 'Suivé' || t === 'Whatssap'; } },
+    { k: 'pret', lab: "Prêt pour expédition", f: function (o) { return sStatut(o) === 'Confirmé' && noDelivery(o); } },
+    { k: 'risque', lab: "Risque d'annulation", f: function (o) { return isCall(o) && noDelivery(o) && ageMs(o) > DAY1; } }
+  ];
+
+  /* ── محرك 1: الإحصائيات المعروضة ──────────────────────────────────── */
+  function stats(rows) {
+    var s = {
+      n: rows.length, confirmed: 0, cancelled: 0, ventes: 0, units: 0,
+      call: 0, suivi: 0, pret: 0, risque: 0, tries: 0, triesOrders: 0,
+      sold: 0, back: 0, transit: 0, oos: 0, shipped: 0,
+      ventesSold: 0, commission: 0, frais: 0, margin: 0, basket: 0
+    };
+    rows.forEach(function (o) {
+      var t = sStatut(o), lv = sLivr(o);
+      if (t === 'Confirmé') { s.confirmed++; s.ventes += price(o); s.units += units(o); }
+      if (t === 'Annulé') s.cancelled++;
+      if (isCall(o) && lv === '') s.call++;
+      if (t === 'Rappel' || t === 'Suivé' || t === 'Whatssap') s.suivi++;
+      if (t === 'Confirmé' && lv === '') s.pret++;
+      if (isCall(o) && lv === '' && ageMs(o) > DAY1) s.risque++;
+      var tr = callTries(o);
+      if (tr) { s.tries += tr; s.triesOrders++; }
+      if (isSold(o)) {
+        s.sold++;
+        s.ventesSold += price(o);
+        s.commission += num(o.commission);
+        s.frais += shipCost(o);
+      }
+      if (isBack(o)) s.back++;
+      if (isTransit(o)) s.transit++;
+      if (lv === 'Out Of Stock') s.oos++;
+      if (isShipped(o)) s.shipped++;
+    });
+    s.conv = pct(s.confirmed, s.n);                 /* CRM: nc/ie.length*100 */
+    s.basket = s.confirmed ? s.ventes / s.confirmed : 0;   /* CRM: sum/nc */
+    s.rateConf = s.conv;
+    s.rateDeliv = pct(s.sold, s.confirmed);
+    s.rateReturn = pct(s.back, s.sold + s.back);
+    s.rateShip = pct(s.shipped, s.confirmed);
+    s.margin = s.ventesSold - s.frais - s.commission;
+    return s;
+  }
+
+  /* ── محرك 2: portage حرفي ديال كود CRM (للتحقق) ───────────────────── */
+  function crmRef(ie) {
+    var isC = function (o) { return String(o.statut == null ? '' : o.statut).trim() === 'Confirmé'; };
+    var sumPx = function (a) { return a.reduce(function (t, o) { return t + (Number(o.prix) || 0); }, 0); };
+    var isCallX = function (o) { var t = String(o.statut == null ? '' : o.statut).trim(); return t === '' || /^Appel/i.test(t); };
+    var ageX = function (o) { return Date.now() - Date.parse(String(o.dateCreation == null ? '' : o.dateCreation).slice(0, 10)); };
+    var kpiF = {
+      call: function (o) { return isCallX(o) && o.livraison === ''; },
+      suivi: function (o) { var t = String(o.statut == null ? '' : o.statut).trim(); return t === 'Rappel' || t === 'Suivé' || t === 'Whatssap'; },
+      pret: function (o) { return String(o.statut == null ? '' : o.statut).trim() === 'Confirmé' && o.livraison === ''; },
+      risque: function (o) { return isCallX(o) && o.livraison === '' && ageX(o) > 864e5; }
+    };
+    var nc = ie.filter(isC).length;
+    var r = { nc: nc, n: ie.length, ventes: sumPx(ie.filter(isC)), conv: ie.length ? (nc / ie.length) * 100 : 0 };
+    r.basket = nc ? r.ventes / nc : 0;
+    Object.keys(kpiF).forEach(function (k) { r[k] = ie.filter(kpiF[k]).length; });
+    return r;
+  }
+
+  /* ── اختيار الطلبيات ──────────────────────────────────────────────── */
+  function filtered() {
+    var r = range();
+    var out = RAW.orders.filter(function (o) {
+      if (!inRange(o.dateCreation, r)) return false;
+      if (STATE.agent && agentKey(o) !== STATE.agent) return false;
+      if (STATE.product && productKey(o) !== STATE.product) return false;
+      return true;
+    });
+    return { rows: out, range: r };
+  }
+
+  function spendIn(r) {
+    var sum = 0, n = 0;
+    RAW.spend.forEach(function (x) {
+      var day = String(x.date || '').slice(0, 10);
+      if (!inRange(day, r)) return;
+      if (STATE.agent && String(x.agent || '').trim() !== STATE.agent) return;
+      if (STATE.product && String(x.produit || '').trim() !== STATE.product) return;
+      sum += num(x.amount); n++;
+    });
+    return { amount: sum, n: n };
+  }
+
+  function groupBy(rows, keyFn) {
+    var m = new Map();
+    rows.forEach(function (o) {
+      var k = keyFn(o);
+      if (!m.has(k)) m.set(k, []);
+      m.get(k).push(o);
+    });
+    return m;
+  }
+
+  /* ── أيقونات SVG (بلا إيموجي: كتبان فكل الأنظمة) ───────────────────── */
+  var SVG = function (d) {
+    return '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + d + '</svg>';
+  };
+  var ICO = {
+    cal: SVG('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'),
+    box: SVG('<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/>'),
+    target: SVG('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>'),
+    search: SVG('<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>')
+  };
+
+  /* ── رسم بياني SVG ─────────────────────────────────────────────────── */
+  function lineChart(series, opts) {
+    opts = opts || {};
+    var W = 1000, H = opts.h || 220, pad = { l: 44, r: 12, t: 12, b: 26 };
+    var labels = opts.labels || [];
+    var max = 0;
+    series.forEach(function (s) { s.points.forEach(function (v) { if (v > max) max = v; }); });
+    max = max || 1;
+    var nice = Math.pow(10, Math.floor(Math.log10(max)));
+    var step = nice;
+    var top = Math.ceil(max / step) * step;
+    if (top / step < 3) { step = step / 2; top = Math.ceil(max / step) * step; }
+    var iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+    var n = Math.max(1, (series[0] ? series[0].points.length : 1) - 1);
+    var x = function (i) { return pad.l + (n ? (i / n) * iw : 0); };
+    var y = function (v) { return pad.t + ih - (v / top) * ih; };
+
+    var g = '';
+    for (var v = 0; v <= top + 0.001; v += step) {
+      g += '<line x1="' + pad.l + '" x2="' + (W - pad.r) + '" y1="' + y(v) + '" y2="' + y(v) + '" stroke="currentColor" stroke-opacity=".10" stroke-dasharray="3 4"/>';
+      g += '<text x="' + (pad.l - 8) + '" y="' + (y(v) + 4) + '" text-anchor="end" font-size="10" fill="currentColor" fill-opacity=".45">' + nf(Math.round(v)) + '</text>';
+    }
+    labels.forEach(function (lb, i) {
+      if (labels.length > 12 && i % Math.ceil(labels.length / 10) !== 0) return;
+      g += '<text x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" fill="currentColor" fill-opacity=".45">' + esc(lb) + '</text>';
+    });
+    series.forEach(function (s) {
+      var d = '', area = '';
+      s.points.forEach(function (v, i) {
+        d += (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1) + ' ';
+      });
+      s.points.forEach(function (v, i) { area += (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1) + ' '; });
+      area += 'L' + x(s.points.length - 1).toFixed(1) + ' ' + (pad.t + ih) + ' L' + x(0).toFixed(1) + ' ' + (pad.t + ih) + ' Z';
+      if (s.fill) g += '<path d="' + area + '" fill="' + s.color + '" fill-opacity=".10"/>';
+      g += '<path d="' + d + '" fill="none" stroke="' + s.color + '" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+      s.points.forEach(function (v, i) {
+        if (s.points.length <= 40) g += '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="2.6" fill="' + s.color + '"/>';
+      });
+    });
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">' + g + '</svg>';
+  }
+
+  function barChart(items, opts) {
+    opts = opts || {};
+    var W = 1000, H = opts.h || 240, pad = { l: 46, r: 12, t: 14, b: 46 };
+    var max = Math.max.apply(null, items.map(function (i) { return i.value; }).concat([1]));
+    var iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+    var bw = Math.min(52, (iw / Math.max(items.length, 1)) * 0.55);
+    var gap = (iw - bw * items.length) / Math.max(items.length - 1, 1);
+    var g = '';
+    for (var k = 0; k <= 4; k++) {
+      var v = (max / 4) * k, yy = pad.t + ih - (v / max) * ih;
+      g += '<line x1="' + pad.l + '" x2="' + (W - pad.r) + '" y1="' + yy + '" y2="' + yy + '" stroke="currentColor" stroke-opacity=".10" stroke-dasharray="3 4"/>';
+      g += '<text x="' + (pad.l - 8) + '" y="' + (yy + 4) + '" text-anchor="end" font-size="10" fill="currentColor" fill-opacity=".45">' + nf(Math.round(v)) + '</text>';
+    }
+    items.forEach(function (it, i) {
+      var x = pad.l + i * (bw + gap);
+      var h = (it.value / max) * ih;
+      g += '<rect x="' + x.toFixed(1) + '" y="' + (pad.t + ih - h).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(h, 1).toFixed(1) + '" rx="4" fill="' + (it.color || '#16a34a') + '"/>';
+      g += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (pad.t + ih + 14) + '" text-anchor="middle" font-size="10" fill="currentColor" fill-opacity=".6">' + esc(it.label).slice(0, 14) + '</text>';
+      g += '<text x="' + (x + bw / 2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" fill-opacity=".75">' + esc(it.sub || '') + '</text>';
+    });
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto">' + g + '</svg>';
+  }
+
+  function hbar(items, color) {
+    var max = Math.max.apply(null, items.map(function (i) { return i.value; }).concat([1]));
+    return items.map(function (it) {
+      var w = Math.max(2, (it.value / max) * 100);
+      return '<div style="margin-bottom:9px">' +
+        '<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px">' +
+        '<span style="font-weight:700">' + esc(it.label) + '</span>' +
+        '<span style="color:var(--muted);font-variant-numeric:tabular-nums">' + esc(it.sub || '') + '</span></div>' +
+        '<div style="height:8px;border-radius:99px;background:var(--line);overflow:hidden">' +
+        '<i style="display:block;height:100%;width:' + w.toFixed(1) + '%;border-radius:99px;background:' + (it.color || color || 'var(--blue)') + '"></i></div>' +
+        '</div>';
+    }).join('');
+  }
+
+  /* ── بطاقة بنت ─────────────────────────────────────────────────────── */
+  function agentCard(a, i) {
+    var cls = a.rateConf >= 60 ? 'ok' : a.rateConf >= 30 ? 'mid' : 'bad';
+    return '<div class="ag">' +
+      '<div class="ag-top">' +
+        '<div class="rank ' + (i === 0 ? 'r1' : '') + '">' + (i + 1) + '</div>' +
+        '<div><div class="ag-name">' + esc(a.name) + '</div>' +
+        '<div class="ag-meta">' + a.n + ' commandes · ' + a.confirmed + ' confirmées</div></div>' +
+        '<div class="ag-rev"><div class="l">Ventes (CRM)</div><div class="v">' + money(a.ventes) + '</div></div>' +
+      '</div>' +
+      '<div class="rates">' +
+        '<div class="rate green"><div class="l">Taux de confirmation</div><div class="v">' + p1(a.rateConf) + '</div>' +
+          '<div class="bar"><i style="width:' + Math.min(100, a.rateConf).toFixed(1) + '%"></i></div></div>' +
+        '<div class="rate blue"><div class="l">Taux de livraison</div><div class="v">' + p1(a.rateDeliv) + '</div>' +
+          '<div class="bar"><i style="width:' + Math.min(100, a.rateDeliv).toFixed(1) + '%"></i></div></div>' +
+      '</div>' +
+      '<div class="grp-lab">Résultats</div>' +
+      '<div class="tiles">' +
+        '<div class="tile g"><b>' + a.confirmed + '</b><span>Confirmées</span></div>' +
+        '<div class="tile t"><b>' + a.sold + '</b><span>Livrées</span></div>' +
+        '<div class="tile r"><b>' + a.back + '</b><span>Retours</span></div>' +
+        '<div class="tile b"><b>' + a.shipped + '</b><span>Expédiées</span></div>' +
+      '</div>' +
+      '<div class="grp-lab">Activité &amp; suivi</div>' +
+      '<div class="tiles">' +
+        '<div class="tile"><b>' + a.n + '</b><span>Assignées</span></div>' +
+        '<div class="tile a"><b>' + a.tries + '</b><span>Appels</span></div>' +
+        '<div class="tile r"><b>' + a.cancelled + '</b><span>Annulées</span></div>' +
+        '<div class="tile v"><b>' + nf(a.commission) + '</b><span>Commission</span></div>' +
+      '</div>' +
+      '<div class="ag-foot"><span>Panier moyen ' + money(a.basket) + '</span>' +
+      '<span class="tag ' + cls + '">' + (cls === 'ok' ? 'Bonne' : cls === 'mid' ? 'Moyenne' : 'À travailler') + '</span></div>' +
+    '</div>';
+  }
+
+  /* ── عرض ───────────────────────────────────────────────────────────── */
+  function REDRAW() {
+    var f = filtered(), rows = f.rows, r = f.range, st = stats(rows);
+    var ref = crmRef(rows);
+    var prev = prevRange(r);
+    var pst = prev ? stats(RAW.orders.filter(function (o) {
+      if (!inRange(o.dateCreation, prev)) return false;
+      if (STATE.agent && agentKey(o) !== STATE.agent) return false;
+      if (STATE.product && productKey(o) !== STATE.product) return false;
+      return true;
+    })) : null;
+    var spend = spendIn(r);
+
+    /* سلاسل زمنية */
+    var byDay = new Map();
+    rows.forEach(function (o) {
+      var d = String(o.dateCreation || '').slice(0, 10);
+      if (!d) return;
+      if (!byDay.has(d)) byDay.set(d, { n: 0, sold: 0, ventes: 0, conf: 0 });
+      var e = byDay.get(d); e.n++;
+      if (isSold(o)) e.sold++;
+      if (isConfirmed(o)) { e.conf++; e.ventes += price(o); }
+    });
+    var days = Array.from(byDay.keys()).sort();
+    if (!days.length) days = [iso(today())];
+
+    function agg(map) {
+      return Array.from(map.entries()).map(function (e) {
+        var s = stats(e[1]); s.name = e[0]; return s;
+      });
+    }
+    var agents = agg(groupBy(rows, agentKey)).filter(function (a) { return a.name !== 'Sans agente'; })
+      .sort(function (a, b) { return b.ventes - a.ventes || b.sold - a.sold || b.n - a.n; });
+    var prods = agg(groupBy(rows, productKey)).filter(function (p) { return p.name !== '—'; })
+      .sort(function (a, b) { return b.ventes - a.ventes || b.n - a.n; });
+    var cities = agg(groupBy(rows, function (o) { return String(o.ville || '').trim() || '—'; }))
+      .filter(function (c) { return c.name !== '—'; }).sort(function (a, b) { return b.n - a.n; });
+    var sources = agg(groupBy(rows, function (o) { return String(o.originLead || '').trim() || 'Non renseignée'; }))
+      .sort(function (a, b) { return b.n - a.n; });
+
+    /* produit × agent */
+    var px = [];
+    var pm = groupBy(rows.filter(function (o) { return productKey(o) !== '—'; }), productKey);
+    pm.forEach(function (list, prod) {
+      var am = groupBy(list, agentKey);
+      var best = null;
+      am.forEach(function (l, ag) {
+        var s = stats(l); s.agent = ag;
+        if (!best || s.ventes > best.ventes || (s.ventes === best.ventes && s.sold > best.sold)) best = s;
+      });
+      var all = stats(list); all.product = prod; all.best = best;
+      px.push(all);
+    });
+    px.sort(function (a, b) { return b.ventes - a.ventes || b.n - a.n; });
+
+    /* محاولات */
+    var tries = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 };
+    rows.forEach(function (o) { var t = callTries(o); if (t > 0) tries[Math.min(t, 6)] = (tries[Math.min(t, 6)] || 0) + 1; });
+
+    var maxAgent = Math.max.apply(null, agents.map(function (a) { return a.ventes; }).concat([1]));
+    var periodLabel = r.from ? (iso(r.from) === iso(r.to) ? iso(r.to) : iso(r.from) + ' → ' + iso(r.to)) : 'Toutes les dates';
+
+    /* ── تحقق ── */
+    var checks = [
+      ['commandes', 'Commandes (période)', 'ie.length', st.n, ref.n, 0],
+      ['conf', 'Confirmées', 'statut === "Confirmé"', st.confirmed, ref.nc, 0],
+      ['conv', 'Taux de conversion', 'nc / ie.length × 100', st.conv, ref.conv, 2],
+      ['ventes', 'Ventes (période)', 'Σ Number(prix) des confirmées', st.ventes, ref.ventes, 2],
+      ['basket', 'Panier moyen', 'ventes / confirmées', st.basket, ref.basket, 2],
+      ['call', 'À contacter', 'isCall && livraison === ""', st.call, ref.call, 0],
+      ['suivi', 'Suivi nécessaire', 'statut ∈ {Rappel, Suivé, Whatssap}', st.suivi, ref.suivi, 0],
+      ['pret', 'Prêt pour expédition', 'Confirmé && livraison === ""', st.pret, ref.pret, 0],
+      ['risque', "Risque d'annulation", 'isCall && livraison === "" && âge > 24 h', st.risque, ref.risque, 0]
+    ];
+    var bad = checks.filter(function (c) { return Math.abs(c[3] - c[4]) > Math.pow(10, -c[5]) / 2; }).length;
+
+    var H = [];
+
+    /* ── 1. بطاقات CRM (نفس الأرقام اللي فـ index) ── */
+    H.push('<div class="sec"><div class="sec-head"><div><h2 class="sec-title">Indicateurs du CRM</h2>' +
+      '<p class="sec-sub">Mêmes cartes, mêmes formules que le tableau de bord — elles doivent afficher exactement les mêmes chiffres.</p></div>' +
+      '<span class="pill"><span class="crmtag">CRM</span> formules identiques</span></div>');
+    H.push('<div class="kpis">');
+    H.push(kpiCard('À contacter', nf(st.call), null, 'amber', 'Appels à passer (statut vide ou Appel-N)', 'Appel + livraison vide', 'crm'));
+    H.push(kpiCard('Suivi nécessaire', nf(st.suivi), null, 'blue', 'Rappel · Suivé · Whatssap', 'statut ∈ 3 valeurs', 'crm'));
+    H.push(kpiCard('Prêt pour expédition', nf(st.pret), null, 'teal', 'Confirmées pas encore expédiées', 'Confirmé + livraison vide', 'crm'));
+    H.push(kpiCard("Risque d'annulation", nf(st.risque), null, 'red', 'Non confirmées depuis plus de 24 h', 'appel + âge > 24 h', 'crm'));
+    H.push(kpiCard('Ventes (période)', money(st.ventes), delta(st.ventes, pst && pst.ventes), 'violet', 'Confirmées · panier ' + money(st.basket), 'Σ prix confirmées', 'crm'));
+    H.push(kpiCard('Taux de conversion', p1(st.conv), null, 'green', nf(st.confirmed) + ' / ' + nf(st.n) + ' commandes', 'confirmées ÷ commandes', 'crm'));
+    H.push('</div></div>');
+
+    /* ── 2. بطاقات الحساب ── */
+    H.push('<div class="sec"><div class="sec-head"><div><h2 class="sec-title">Résultats opérationnels</h2>' +
+      '<p class="sec-sub">Livraisons, retours et marge — calculés sur les mêmes commandes, avec les mêmes règles de statut.</p></div>' +
+      '<span class="pill"><span class="calctag">CALC</span> dérivé des mêmes données</span></div>');
+    H.push('<div class="kpis">');
+    H.push(kpiCard('Commandes', nf(st.n), delta(st.n, pst && pst.n), 'navy', prev ? 'vs période précédente' : "tout l'historique", 'toutes les commandes', 'calc'));
+    H.push(kpiCard('Confirmées', nf(st.confirmed), null, 'green', 'Taux de confirmation ' + p1(st.conv), 'statut = Confirmé', 'calc'));
+    H.push(kpiCard('Livrées', nf(st.sold), null, 'teal', 'Taux de livraison ' + p1(st.rateDeliv), 'Livrée + Rechange', 'calc'));
+    H.push(kpiCard('Retours', nf(st.back), null, 'red', 'Taux de retour ' + p1(st.rateReturn), 'Retour + Remboursé', 'calc'));
+    H.push(kpiCard('En transit', nf(st.transit), null, 'blue', 'Chez le livreur', 'Expédier vers', 'calc'));
+    H.push(kpiCard('Marge estimée', money(st.margin), null, 'amber', 'Ventes livrées − frais − commissions', 'sur les livrées', 'calc'));
+    H.push('</div>');
+    H.push('<div class="note" style="margin-top:9px">Ventes livrées <b>' + money(st.ventesSold) + '</b> · frais de livraison <b>' + money(st.frais) +
+      '</b> · commissions <b>' + money(st.commission) + '</b> · panier moyen <b>' + money(st.basket) + '</b></div>');
+    H.push('</div>');
+
+    /* ── 3. Contrôle de cohérence ── */
+    H.push('<div class="sec"><div class="audit">');
+    H.push('<div class="hd"><div><div class="t"><span class="ico">' + ICO.search + '</span>Contrôle de cohérence</div>' +
+      '<div class="s">Chaque indicateur est recalculé par un second moteur (portage littéral du code du CRM) puis comparé.</div></div>' +
+      '<span class="chip ' + (bad ? 'ko' : 'ok') + '">' + (bad ? '✕ ' + bad + ' écart(s)' : '✓ ' + checks.length + '/' + checks.length + ' identiques au CRM') + '</span></div>');
+    H.push('<div style="padding:0"><div class="tw parity" style="border:0;box-shadow:none;border-radius:0"><table><thead><tr>' +
+      '<th>Indicateur</th><th>Règle CRM</th><th class="num">Cette page</th><th class="num">Moteur de contrôle</th><th class="num">Écart</th></tr></thead><tbody>');
+    checks.forEach(function (c) {
+      var d = c[3] - c[4];
+      var ok = Math.abs(d) <= Math.pow(10, -c[5]) / 2;
+      var fmt = function (v) {
+        if (c[5] === 2) {
+          var parts = (Math.round(v * 100) / 100).toFixed(2).split('.');
+          return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + '.' + parts[1];
+        }
+        return nf(v);
+      };
+      H.push('<tr><td class="name">' + esc(c[1]) + '</td><td><span class="rulecode">' + esc(c[2]) + '</span></td>' +
+        '<td class="num"><b>' + fmt(c[3]) + '</b></td><td class="num">' + fmt(c[4]) + '</td>' +
+        '<td class="num ' + (ok ? 'ok' : 'ko') + '">' + (ok ? '✓ 0' : (d > 0 ? '+' : '') + fmt(d)) + '</td></tr>');
+    });
+    H.push('</tbody></table></div></div></div></div>');
+
+    /* ── 4. البنات ── */
+    H.push('<div class="sec"><div class="sec-head"><div><h2 class="sec-title">Performance des agentes</h2>' +
+      '<p class="sec-sub">Triées par ventes (Σ prix des confirmées). Chaque carte est calculée sur la période sélectionnée.</p></div>' +
+      '<span class="pill"><span class="dot"></span>' + agents.length + ' agentes</span></div>');
+    H.push('<div class="agents">' + (agents.length ? agents.map(agentCard).join('') : '<div class="card empty">Aucune commande sur cette période.</div>') + '</div></div>');
+
+    /* ── 5. جدول البنات ── */
+    H.push('<div class="sec"><div class="sec-head"><div><h2 class="sec-title">Tableau comparatif</h2>' +
+      '<p class="sec-sub">Commandes, confirmations, ventes, livraisons, retours et commissions par agente.</p></div></div>');
+    H.push('<div class="tw"><table><thead><tr>' +
+      '<th>#</th><th>Agente</th><th class="num">Commandes</th><th class="num">Confirmées</th><th class="num">Taux conf.</th>' +
+      '<th class="num">Ventes</th><th class="num">Livrées</th><th class="num">Taux liv.</th><th class="num">Retours</th><th class="num">Taux retour</th>' +
+      '<th class="num">Panier moy.</th><th class="num">Commission</th><th style="min-width:110px">Part des ventes</th>' +
+      '</tr></thead><tbody>');
+    agents.forEach(function (a, i) {
+      var share = maxAgent ? (a.ventes / maxAgent) * 100 : 0;
+      H.push('<tr><td class="num">' + (i + 1) + '</td><td class="name">' + esc(a.name) + '</td>' +
+        '<td class="num">' + nf(a.n) + '</td><td class="num">' + nf(a.confirmed) + '</td>' +
+        '<td class="num">' + badge(a.rateConf, 55, 30) + '</td>' +
+        '<td class="num"><b>' + money(a.ventes) + '</b></td>' +
+        '<td class="num">' + nf(a.sold) + '</td><td class="num">' + p1(a.rateDeliv) + '</td>' +
+        '<td class="num">' + nf(a.back) + '</td>' +
+        '<td class="num">' + (a.rateReturn > 45 ? '<span class="badge bad">' + p1(a.rateReturn) + '</span>' : (a.rateReturn > 25 ? '<span class="badge mid">' + p1(a.rateReturn) + '</span>' : p1(a.rateReturn))) + '</td>' +
+        '<td class="num">' + money(a.basket) + '</td>' +
+        '<td class="num">' + money(a.commission) + '</td>' +
+        '<td><div class="mini"><i style="width:' + share.toFixed(1) + '%"></i></div></td></tr>');
+    });
+    if (!agents.length) H.push('<tr><td colspan="13" class="empty">Aucune donnée.</td></tr>');
+    H.push('</tbody></table></div></div>');
+
+    /* ── 6. رسوم ── */
+    H.push('<div class="sec grid2">');
+    H.push('<div class="chart"><h3>Activité des commandes</h3><p>Nombre de commandes reçues par jour.</p>' +
+      lineChart([{ points: days.map(function (d) { return (byDay.get(d) || { n: 0 }).n; }), color: '#2563eb', fill: true }], { labels: days.map(function (d) { return d.slice(8) + '/' + d.slice(5, 7); }) }) +
+      '<div class="legend"><span><i style="background:#2563eb"></i>Commandes</span></div></div>');
+    H.push('<div class="chart"><h3>Ventes par jour</h3><p>Σ prix des commandes confirmées (MAD) — même règle que le CRM.</p>' +
+      lineChart([{ points: days.map(function (d) { return (byDay.get(d) || { ventes: 0 }).ventes; }), color: '#16a34a', fill: true }], { labels: days.map(function (d) { return d.slice(8) + '/' + d.slice(5, 7); }) }) +
+      '<div class="legend"><span><i style="background:#16a34a"></i>Ventes</span></div></div>');
+    H.push('</div>');
+
+    H.push('<div class="sec grid2">');
+    H.push('<div class="chart"><h3>Confirmations par agente</h3><p>Commandes confirmées sur la période.</p>' +
+      barChart(agents.slice(0, 10).map(function (a) { return { label: a.name, value: a.confirmed, sub: nf(a.confirmed), color: '#16a34a' }; })) + '</div>');
+    H.push('<div class="chart"><h3>Retours par agente</h3><p>Colis revenus (Retour / Remboursé).</p>' +
+      barChart(agents.slice(0, 10).map(function (a) { return { label: a.name, value: a.back, sub: nf(a.back), color: '#dc2626' }; })) + '</div>');
+    H.push('</div>');
+
+    /* ── 7. produits ── */
+    H.push('<div class="sec card"><div class="banner"><div><div class="t"><span class="ico">' + ICO.box + '</span>Performance des produits</div>' +
+      '<div class="s">Ce qui se vend réellement : commandes, confirmations, livraisons, retours et ventes par produit.</div></div></div>' +
+      '<div class="card-body"><div class="tw" style="border:0;box-shadow:none"><table><thead><tr>' +
+      '<th>#</th><th>Produit</th><th class="num">Commandes</th><th class="num">Confirmées</th><th class="num">Ventes</th><th class="num">Livrées</th>' +
+      '<th class="num">Retours</th><th class="num">Taux retour</th><th class="num">Panier moy.</th><th class="num">Qté</th><th style="min-width:120px">Part des ventes</th>' +
+      '</tr></thead><tbody>');
+    var maxProd = Math.max.apply(null, prods.map(function (p) { return p.ventes; }).concat([1]));
+    prods.forEach(function (p, i) {
+      H.push('<tr><td class="num">' + (i + 1) + '</td><td class="name" dir="auto" style="max-width:280px;white-space:normal">' + esc(p.name) + '</td>' +
+        '<td class="num">' + nf(p.n) + '</td><td class="num">' + nf(p.confirmed) + '</td><td class="num"><b>' + money(p.ventes) + '</b></td>' +
+        '<td class="num">' + nf(p.sold) + '</td>' +
+        '<td class="num">' + nf(p.back) + '</td><td class="num">' + (p.rateReturn > 45 ? '<span class="badge bad">' + p1(p.rateReturn) + '</span>' : (p.rateReturn > 25 ? '<span class="badge mid">' + p1(p.rateReturn) + '</span>' : p1(p.rateReturn))) + '</td>' +
+        '<td class="num">' + money(p.basket) + '</td><td class="num">' + nf(p.units) + '</td>' +
+        '<td><div class="mini"><i style="width:' + ((p.ventes / maxProd) * 100).toFixed(1) + '%;background:#7c3aed"></i></div></td></tr>');
+    });
+    if (!prods.length) H.push('<tr><td colspan="11" class="empty">Aucun produit sur cette période.</td></tr>');
+    H.push('</tbody></table></div></div></div>');
+
+    H.push('<div class="sec grid2">');
+    H.push('<div class="chart"><h3>Top produits par ventes</h3><p>Les 8 produits qui rapportent le plus (confirmées).</p>' +
+      hbar(prods.slice(0, 8).map(function (p) { return { label: p.name, value: p.ventes, sub: money(p.ventes) }; }), '#7c3aed') + '</div>');
+    H.push('<div class="chart"><h3>Taux de retour par produit</h3><p>Retours ÷ (livrées + retours).</p>' +
+      hbar(prods.slice().sort(function (a, b) { return b.rateReturn - a.rateReturn; }).slice(0, 8)
+        .map(function (p) { return { label: p.name, value: p.rateReturn, sub: p1(p.rateReturn) + ' · ' + p.back + '/' + (p.sold + p.back), color: '#dc2626' }; }), '#dc2626') + '</div>');
+    H.push('</div>');
+
+    /* ── 8. produit × agent ── */
+    H.push('<div class="sec card"><div class="banner"><div><div class="t"><span class="ico">' + ICO.target + '</span>Produit × Agente</div>' +
+      '<div class="s">Meilleure agente et ventes pour chaque produit.</div></div></div>' +
+      '<div class="card-body"><div class="tw" style="border:0;box-shadow:none"><table><thead><tr>' +
+      '<th>Produit</th><th>Meilleure agente</th><th class="num">Commandes</th><th class="num">Confirmées</th><th class="num">Livrées</th><th class="num">Taux livraison</th><th class="num">Ventes</th></tr></thead><tbody>');
+    px.slice(0, 12).forEach(function (p) {
+      H.push('<tr><td class="name" dir="auto" style="max-width:260px;white-space:normal">' + esc(p.product) + '</td>' +
+        '<td><span class="badge info">' + esc(p.best ? p.best.agent : '—') + '</span></td>' +
+        '<td class="num">' + nf(p.n) + '</td><td class="num">' + nf(p.confirmed) + '</td><td class="num">' + nf(p.sold) + '</td>' +
+        '<td class="num">' + p1(p.rateDeliv) + '</td><td class="num"><b>' + money(p.ventes) + '</b></td></tr>');
+    });
+    if (!px.length) H.push('<tr><td colspan="7" class="empty">Aucune donnée.</td></tr>');
+    H.push('</tbody></table></div></div></div>');
+
+    /* ── 9. مدن + مصادر ── */
+    H.push('<div class="sec grid2">');
+    H.push('<div class="chart"><h3>Villes</h3><p>Commandes, livraisons et retours par ville.</p><div class="tw" style="border:0;box-shadow:none"><table>' +
+      '<thead><tr><th>Ville</th><th class="num">Cmd.</th><th class="num">Confirmées</th><th class="num">Livrées</th><th class="num">Retours</th><th class="num">Taux retour</th></tr></thead><tbody>' +
+      cities.slice(0, 12).map(function (c) {
+        return '<tr><td class="name" dir="auto">' + esc(c.name) + '</td><td class="num">' + nf(c.n) + '</td><td class="num">' + nf(c.confirmed) + '</td><td class="num">' + nf(c.sold) + '</td>' +
+          '<td class="num">' + nf(c.back) + '</td><td class="num">' + p1(c.rateReturn) + '</td></tr>';
+      }).join('') + '</tbody></table></div></div>');
+    H.push('<div class="chart"><h3>Sources</h3><p>D\'où viennent les commandes et ce qu\'elles rapportent.</p><div class="tw" style="border:0;box-shadow:none"><table>' +
+      '<thead><tr><th>Source</th><th class="num">Cmd.</th><th class="num">Confirmées</th><th class="num">Taux conf.</th><th class="num">Ventes</th></tr></thead><tbody>' +
+      sources.map(function (s) {
+        return '<tr><td class="name">' + esc(s.name) + '</td><td class="num">' + nf(s.n) + '</td><td class="num">' + nf(s.confirmed) + '</td>' +
+          '<td class="num">' + p1(s.rateConf) + '</td><td class="num">' + money(s.ventes) + '</td></tr>';
+      }).join('') + '</tbody></table></div>' +
+      '<div class="note">Dépenses publicitaires de la période : <b>' + (spend.n ? money(spend.amount) : '— aucune saisie') + '</b>' +
+      (spend.n ? ' (' + spend.n + ' ligne' + (spend.n > 1 ? 's' : '') + ') · coût par commande confirmée : <b>' + (st.confirmed ? money(spend.amount / st.confirmed) : '—') + '</b>' : '') +
+      '</div></div>');
+    H.push('</div>');
+
+    /* ── 10. tunnel + appels ── */
+    H.push('<div class="sec card"><div class="banner"><div><div class="t"><span class="ico">' + ICO.search + '</span>Tunnel de confirmation</div>' +
+      '<div class="s">De la commande assignée jusqu\'à la livraison.</div></div></div><div class="card-body" style="padding:12px">');
+    H.push('<div class="funnel">' + [
+      ['Assignées', st.n, 100],
+      ['Confirmées', st.confirmed, pct(st.confirmed, st.n)],
+      ['Expédiées', st.shipped, pct(st.shipped, st.n)],
+      ['Livrées', st.sold, pct(st.sold, st.n)]
+    ].map(function (v) {
+      return '<div class="fstep"><div class="l">' + v[0] + '</div><div class="v">' + nf(v[1]) + '</div>' +
+        '<div class="b"><i style="width:' + Math.min(100, v[2]).toFixed(1) + '%"></i></div>' +
+        '<div class="p">' + p1(v[2]) + ' des commandes</div></div>';
+    }).join('') + '</div>');
+    H.push('<div class="grid2" style="margin-top:12px"><div class="chart" style="border:0;box-shadow:none;padding:0">' +
+      '<h3>Répartition des tentatives d\'appel</h3><p>Nombre de commandes par nombre de tentatives (statut Appel-N).</p>' +
+      barChart([1, 2, 3, 4, 5, 6].map(function (i) {
+        return { label: 'Appel ' + i + (i === 6 ? '+' : ''), value: tries[i] || 0, sub: nf(tries[i] || 0), color: ['#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#ef4444'][i - 1] };
+      }), { h: 220 }) + '</div>' +
+      '<div class="chart" style="border:0;box-shadow:none;padding:0"><h3>Statuts des commandes</h3><p>Répartition exacte des statuts saisis dans le CRM.</p>' +
+      hbar(statusBreakdown(rows), '#0f1e35') + '</div></div>');
+    H.push('<div class="note">Tout est calculé depuis les champs réels : <b>statut</b>, <b>livraison</b>, <b>prix</b>, <b>commission</b>, <b>ville</b> (frais de livraison) et <b>adspend</b>. ' +
+      'Les commandes supprimées (<code>_del</code>) sont exclues, comme dans le CRM.</div>');
+    H.push('</div></div>');
+
+    $('app').innerHTML = H.join('');
+    $('statusTxt').textContent = 'Données chargées · ' + nf(RAW.orders.length) + ' commandes actives · ' + periodLabel +
+      (bad ? ' · ⚠ ' + bad + ' écart(s) CRM' : ' · ✓ cohérent avec le CRM');
+    $('who').textContent = actor ? ('Connecté : ' + actor.name) : '';
+    var dot = document.querySelector('#status .dot');
+    if (dot) dot.className = bad ? 'dot warn' : 'dot';
+  }
+
+  function statusBreakdown(rows) {
+    var m = new Map();
+    rows.forEach(function (o) { var k = sStatut(o) || 'Sans statut'; m.set(k, (m.get(k) || 0) + 1); });
+    return Array.from(m.entries()).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 9).map(function (e) {
+      return { label: e[0], value: e[1], sub: nf(e[1]) + ' · ' + p1(pct(e[1], rows.length)) };
+    });
+  }
+
+  function kpiCard(label, value, delta, tone, sub, rule, tag) {
+    var d = '';
+    if (typeof delta === 'number' && isFinite(delta) && Math.abs(delta) > 0.05) {
+      d = '<span class="delta ' + (delta >= 0 ? 'up' : 'dn') + '">' + (delta >= 0 ? '▲' : '▼') + ' ' + p1(Math.abs(delta)) + '</span>';
+    }
+    var money_ = /MAD/.test(String(value));
+    var t = tag === 'crm' ? '<span class="crmtag">CRM</span> ' : tag === 'calc' ? '<span class="calctag">CALC</span> ' : '';
+    return '<div class="kpi ' + (tone || '') + (money_ ? ' money' : '') + '"><div class="lab">' + t + esc(label) + '</div>' +
+      '<div class="val"><span class="txt">' + value + '</span>' + d + '</div><div class="sub">' + esc(sub || '') + '</div>' +
+      (rule ? '<div class="rule">' + esc(rule) + '</div>' : '') + '</div>';
+  }
+  function delta(now, before) {
+    if (before == null || before === 0) return null;
+    return ((now - before) / before) * 100;
+  }
+  function badge(v, okAt, midAt) {
+    var cls = v >= okAt ? 'ok' : v >= midAt ? 'mid' : 'bad';
+    return '<span class="badge ' + cls + '">' + p1(v) + '</span>';
+  }
+
+  /* ── UI ────────────────────────────────────────────────────────────── */
+  function openCustom(show) {
+    if (show) {
+      var r = range();
+      if (!STATE.from) STATE.from = r.from ? iso(r.from) : iso(new Date(today().getFullYear(), today().getMonth(), 1));
+      if (!STATE.to) STATE.to = r.to ? iso(r.to) : iso(today());
+      $('from').value = STATE.from;
+      $('to').value = STATE.to;
+      $('customWrap').style.display = 'flex';
+    } else {
+      $('customWrap').style.display = 'none';
+    }
+  }
+  function setPeriod(p) {
+    STATE.period = p;
+    openCustom(p === 'custom');
+    [].forEach.call($('periods').children, function (b) { b.classList.toggle('on', b.dataset.p === p); });
+    REDRAW();
+  }
+  function fillSelectors() {
+    var agents = Array.from(new Set(RAW.orders.map(agentKey).filter(function (x) { return x !== 'Sans agente'; }))).sort();
+    var prods = Array.from(new Set(RAW.orders.map(productKey).filter(function (x) { return x !== '—'; }))).sort();
+    $('agentSel').innerHTML = '<option value="">Toutes les agentes</option>' +
+      agents.map(function (a) { return '<option value="' + esc(a) + '">' + esc(a) + '</option>'; }).join('');
+    $('productSel').innerHTML = '<option value="">Tous les produits</option>' +
+      prods.map(function (a) { return '<option value="' + esc(a) + '">' + esc(a) + '</option>'; }).join('');
+  }
+  function exportCsv() {
+    var f = filtered(), st = stats(f.rows);
+    var lines = [];
+    lines.push(['Rapport', 'Performance (formules CRM)'].join(';'));
+    lines.push(['Période', STATE.period, iso(f.range.from || today()), iso(f.range.to || today())].join(';'));
+    lines.push(['Commandes', st.n, 'Confirmées', st.confirmed, 'Conversion %', st.conv.toFixed(2),
+      'Ventes', Math.round(st.ventes), 'Panier moyen', st.basket.toFixed(2),
+      'Livrées', st.sold, 'Retours', st.back, 'Marge', Math.round(st.margin),
+      'À contacter', st.call, 'Suivi', st.suivi, 'Prêt', st.pret, 'Risque', st.risque].join(';'));
+    lines.push('');
+    lines.push(['Agente', 'Commandes', 'Confirmées', 'Taux conf', 'Ventes', 'Livrées', 'Taux liv', 'Retours', 'Taux retour', 'Panier moy', 'Commission'].join(';'));
+    var agents = Array.from(groupBy(f.rows, agentKey).entries()).map(function (e) { var s = stats(e[1]); s.name = e[0]; return s; })
+      .sort(function (a, b) { return b.ventes - a.ventes; });
+    agents.forEach(function (a) {
+      lines.push([a.name, a.n, a.confirmed, a.rateConf.toFixed(1), Math.round(a.ventes), a.sold, a.rateDeliv.toFixed(1), a.back, a.rateReturn.toFixed(1), a.basket.toFixed(2), Math.round(a.commission)].join(';'));
+    });
+    var blob = new Blob(['\ufeff' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'performance-' + iso(today()) + '.csv';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    actor = session();
+    if (!actor) { location.href = 'index.html'; return; }
+    [].forEach.call($('periods').children, function (b) {
+      b.addEventListener('click', function () {
+        if (b.dataset.p === 'custom' && STATE.period === 'custom') {   /* نفس الاختيار: فتح/غلق */
+          openCustom($('customWrap').style.display === 'none');
+          return;
+        }
+        setPeriod(b.dataset.p);
+      });
+    });
+    $('applyCustom').addEventListener('click', function () {
+      var a = $('from').value, b2 = $('to').value;
+      if (!a || !b2) return;
+      STATE.from = a > b2 ? b2 : a;
+      STATE.to = a > b2 ? a : b2;
+      STATE.period = 'custom';
+      [].forEach.call($('periods').children, function (b) { b.classList.toggle('on', b.dataset.p === 'custom'); });
+      openCustom(false);
+      REDRAW();
+    });
+    $('agentSel').addEventListener('change', function (e) { STATE.agent = e.target.value; REDRAW(); });
+    $('productSel').addEventListener('change', function (e) { STATE.product = e.target.value; REDRAW(); });
+    $('refresh').addEventListener('click', function () { boot(); });
+    $('export').addEventListener('click', exportCsv);
+    $('from').addEventListener('change', function (e) { STATE.from = e.target.value; STATE.period = 'custom'; REDRAW(); });
+    $('to').addEventListener('change', function (e) { STATE.to = e.target.value; STATE.period = 'custom'; REDRAW(); });
+    setPeriod('month');
+    boot();
+  });
+
+  async function boot() {
+    $('statusTxt').textContent = 'Chargement…';
+    try {
+      await load();
+      fillSelectors();
+      $('agentSel').value = STATE.agent;
+      $('productSel').value = STATE.product;
+      REDRAW();
+    } catch (e) {
+      $('app').innerHTML = '<div class="err">Erreur de chargement : ' + esc(e.message) + '<br>Vérifiez la connexion puis cliquez sur « Actualiser ».</div>';
+      $('statusTxt').textContent = 'Erreur';
+    }
+  }
+})();
+</script>
+<script src="pv-dark-pages-sync.js" id="pv-dark-pages-js"></script>
+</body>
+</html>

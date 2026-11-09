@@ -1,0 +1,129 @@
+/* ══════════════════════════════════════════════════════════════
+   AfrizoN — الوضع الليلي للصفحات المستقلة (مُولّد آلياً)
+   ما تعدلش هاد الملف بيدك: python3 scripts/build-dark-pages.py
+   ══════════════════════════════════════════════════════════════ */
+
+html[data-pv-theme="dark"]{
+  --amber-soft:hsl(48, 58%, 17%);
+  --bg:#0a1120;
+  --blue-soft:hsl(214, 58%, 17%);
+  --card:#16233a;
+  --green-soft:hsl(141, 58%, 17%);
+  --line:#2b3a56;
+  --muted:#93a4bd;
+  --red-soft:hsl(0, 58%, 17%);
+  --soft:hsl(210, 40%, 17%);
+  --teal-soft:hsl(167, 58%, 17%);
+  --text:#e8eef7;
+  --violet-soft:hsl(251, 58%, 17%);
+}
+
+html[data-pv-theme="dark"] .btn:hover{border-color:#2b3a56 !important}
+html[data-pv-theme="dark"] .banner .ico{background:#16233a !important}
+html[data-pv-theme="dark"] .crmtag{color:hsl(226, 71%, 72%) !important}
+html[data-pv-theme="dark"] .calctag{color:hsl(263, 69%, 72%) !important}
+html[data-pv-theme="dark"] .rank{color:hsl(23, 82%, 72%) !important}
+html[data-pv-theme="dark"] .rank.r1{background:hsl(48, 58%, 17%) !important;color:hsl(22, 78%, 72%) !important}
+html[data-pv-theme="dark"] .rate .bar{background:hsl(214, 32%, 17%) !important}
+html[data-pv-theme="dark"] .tag.ok{color:hsl(143, 64%, 72%) !important}
+html[data-pv-theme="dark"] .tag.mid{color:hsl(23, 82%, 72%) !important}
+html[data-pv-theme="dark"] .tag.bad{color:hsl(0, 70%, 72%) !important}
+html[data-pv-theme="dark"] .mini{background:hsl(214, 32%, 17%) !important}
+html[data-pv-theme="dark"] .badge.ok{color:hsl(143, 64%, 72%) !important}
+html[data-pv-theme="dark"] .badge.mid{color:hsl(23, 82%, 72%) !important}
+html[data-pv-theme="dark"] .badge.bad{color:hsl(0, 70%, 72%) !important}
+html[data-pv-theme="dark"] .badge.info{color:hsl(226, 71%, 72%) !important}
+html[data-pv-theme="dark"] .audit .hd .ico{background:#16233a !important}
+html[data-pv-theme="dark"] .chip.ok{background:hsl(142, 58%, 17%) !important}
+html[data-pv-theme="dark"] .fstep .b{background:hsl(214, 32%, 17%) !important}
+html[data-pv-theme="dark"] .err{color:hsl(0, 70%, 72%) !important;border:#2b3a56 !important}
+html[data-pv-theme="dark"] .nav a:hover,html[data-pv-theme="dark"] .nav a.on{background:#16233a !important}
+html[data-pv-theme="dark"] .btn-gold{color:hsl(224, 45%, 72%) !important}
+html[data-pv-theme="dark"] .scan-icon{border:#2b3a56 !important;background:hsl(45, 58%, 17%) !important}
+html[data-pv-theme="dark"] .dot{background:hsl(142, 58%, 17%) !important}
+html[data-pv-theme="dark"] .notice.ok{background:hsl(149, 58%, 17%) !important;color:hsl(159, 85%, 72%) !important}
+html[data-pv-theme="dark"] .notice.err{background:hsl(353, 58%, 17%) !important;color:hsl(353, 66%, 72%) !important}
+html[data-pv-theme="dark"] .notice.warn{background:hsl(40, 58%, 17%) !important;color:hsl(32, 68%, 72%) !important}
+html[data-pv-theme="dark"] .kpi{border:#2b3a56 !important}
+html[data-pv-theme="dark"] .kpi:hover,html[data-pv-theme="dark"] .kpi.on{border-color:#2b3a56 !important}
+html[data-pv-theme="dark"] thead{color:hsl(223, 45%, 72%) !important}
+html[data-pv-theme="dark"] tbody tr:hover{background:hsl(45, 44%, 17%) !important}
+html[data-pv-theme="dark"] .track{color:hsl(218, 57%, 72%) !important}
+html[data-pv-theme="dark"] .pending{background:hsl(37, 58%, 17%) !important;color:hsl(29, 76%, 72%) !important}
+html[data-pv-theme="dark"] .received{background:hsl(150, 58%, 17%) !important;color:hsl(159, 85%, 72%) !important}
+html[data-pv-theme="dark"] .verify{background:hsl(223, 58%, 17%) !important;color:hsl(222, 54%, 72%) !important}
+html[data-pv-theme="dark"] .anomaly{background:hsl(352, 58%, 17%) !important;color:hsl(353, 64%, 72%) !important}
+html[data-pv-theme="dark"] .bar{background:hsl(45, 32%, 17%) !important}
+html[data-pv-theme="dark"] .close{background:hsl(216, 32%, 17%) !important}
+html[data-pv-theme="dark"] .scan-guide{border:#2b3a56 !important}
+html[data-pv-theme="dark"] .camera-tools .btn{background:#16233a !important;color:#e8eef7 !important}
+html[data-pv-theme="dark"] .camera .close{background:#16233a !important;color:#e8eef7 !important}
+html[data-pv-theme="dark"] .top a{background:#16233a !important}
+html[data-pv-theme="dark"] .who{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .card{background:#16233a !important}
+html[data-pv-theme="dark"] label{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] input{border:#2b3a56 !important;background:#16233a !important;color:hsl(222, 47%, 72%) !important}
+html[data-pv-theme="dark"] .msg.ok{background:hsl(141, 58%, 17%) !important;color:hsl(143, 64%, 72%) !important}
+html[data-pv-theme="dark"] .msg.err{background:hsl(0, 58%, 17%) !important;color:hsl(0, 70%, 72%) !important}
+html[data-pv-theme="dark"] .hint{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .top a{background:#16233a !important}
+html[data-pv-theme="dark"] .card{background:#16233a !important}
+html[data-pv-theme="dark"] label{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] input,html[data-pv-theme="dark"] select{border:#2b3a56 !important;background:#16233a !important}
+html[data-pv-theme="dark"] .hint{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] button{background:hsl(214, 32%, 17%) !important;color:hsl(222, 47%, 72%) !important}
+html[data-pv-theme="dark"] .msg.ok{background:hsl(141, 58%, 17%) !important;color:hsl(143, 64%, 72%) !important}
+html[data-pv-theme="dark"] .msg.err{background:hsl(0, 58%, 17%) !important;color:hsl(0, 70%, 72%) !important}
+html[data-pv-theme="dark"] .top{border-bottom:#2b3a56 !important}
+html[data-pv-theme="dark"] .logo{border:#2b3a56 !important;background:#16233a !important}
+html[data-pv-theme="dark"] .pill,html[data-pv-theme="dark"] .refresh{border:#2b3a56 !important;background:#16233a !important}
+html[data-pv-theme="dark"] .refresh:hover{background:#16233a !important}
+html[data-pv-theme="dark"] .main{background:hsl(212, 36%, 17%) !important}
+html[data-pv-theme="dark"] .side,html[data-pv-theme="dark"] .chat{background:#16233a !important}
+html[data-pv-theme="dark"] .filters{border-bottom:#2b3a56 !important;background:#16233a !important}
+html[data-pv-theme="dark"] .search{border:#2b3a56 !important;background:hsl(210, 40%, 17%) !important}
+html[data-pv-theme="dark"] .search input{color:hsl(218, 45%, 72%) !important}
+html[data-pv-theme="dark"] .tabs button{border:#2b3a56 !important;background:#16233a !important;color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .tabs button.on{border-color:#2b3a56 !important;background:hsl(226, 58%, 17%) !important;color:hsl(245, 58%, 72%) !important}
+html[data-pv-theme="dark"] .summary{border-bottom:#2b3a56 !important;color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .conv{border-bottom:#2b3a56 !important;background:#16233a !important}
+html[data-pv-theme="dark"] .conv:hover{background:hsl(210, 40%, 17%) !important}
+html[data-pv-theme="dark"] .conv.on{background:hsl(226, 58%, 17%) !important}
+html[data-pv-theme="dark"] .avatar{color:hsl(244, 55%, 72%) !important}
+html[data-pv-theme="dark"] .dot{background:hsl(142, 58%, 17%) !important}
+html[data-pv-theme="dark"] .preview{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .closed{background:hsl(210, 40%, 17%) !important;color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .chat-head{border-bottom:#2b3a56 !important;background:#16233a !important}
+html[data-pv-theme="dark"] .chat-head p{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .back{background:hsl(226, 58%, 17%) !important;color:hsl(245, 58%, 72%) !important}
+html[data-pv-theme="dark"] .msg{border:#2b3a56 !important;background:#16233a !important}
+html[data-pv-theme="dark"] .composer{border-top:#2b3a56 !important;background:#16233a !important}
+html[data-pv-theme="dark"] .composer textarea{border:#2b3a56 !important;background:hsl(210, 40%, 17%) !important}
+html[data-pv-theme="dark"] .composer textarea:focus{background:#16233a !important}
+html[data-pv-theme="dark"] .empty,html[data-pv-theme="dark"] .loading,html[data-pv-theme="dark"] .error{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .empty strong,html[data-pv-theme="dark"] .error strong{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .spinner{border:#2b3a56 !important}
+html[data-pv-theme="dark"] .top h1{color:hsl(245, 58%, 72%) !important}
+html[data-pv-theme="dark"] .top h1 span{color:hsl(239, 84%, 72%) !important;background:#16233a !important;border:#2b3a56 !important}
+html[data-pv-theme="dark"] .btns button{border:#2b3a56 !important;background:#16233a !important;color:hsl(243, 75%, 72%) !important}
+html[data-pv-theme="dark"] .btns button:hover{background:hsl(226, 58%, 17%) !important}
+html[data-pv-theme="dark"] canvas{background:#16233a !important;border:#2b3a56 !important}
+html[data-pv-theme="dark"] .hud{color:hsl(215, 45%, 72%) !important;background:#16233a !important;border:#2b3a56 !important}
+html[data-pv-theme="dark"] .hud b{color:hsl(245, 58%, 72%) !important}
+html[data-pv-theme="dark"] .help{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] .help kbd{background:#16233a !important;border:#2b3a56 !important;color:hsl(243, 75%, 72%) !important}
+html[data-pv-theme="dark"] #over{background:hsl(226, 58%, 17%) !important}
+html[data-pv-theme="dark"] #over h2{color:hsl(345, 83%, 72%) !important}
+html[data-pv-theme="dark"] #over p{color:hsl(215, 45%, 72%) !important}
+html[data-pv-theme="dark"] #over .new{color:hsl(163, 85%, 72%) !important}
+
+/* ── retours.html: هيدر الجدول الدهبي (background:var(--gold) + نص غامق) ── */
+html[data-pv-theme="dark"] thead{background:hsl(43, 44%, 19%) !important;color:#efd9a4 !important}
+html[data-pv-theme="dark"] thead th,
+html[data-pv-theme="dark"] thead td{color:#efd9a4 !important;border-color:#3a3220 !important}
+html[data-pv-theme="dark"] tbody tr:hover{background:#1b2a44 !important}
+
+/* ── performance.html: الأزرار المختارة كتبان فـ الوضع الليلي ── */
+html[data-pv-theme="dark"] .seg button.on{background:#2563eb !important;color:#fff !important}
+html[data-pv-theme="dark"] .btn.primary{background:#2563eb !important;border-color:#2563eb !important;color:#fff !important}
+html[data-pv-theme="dark"] .banner{background:#101c31 !important}

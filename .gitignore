@@ -1,0 +1,25 @@
+# dépendances du serveur de dev
+node_modules/
+npm-debug.log*
+
+# données runtime / logs (ne pas versionner — PII clients)
+crm_data.json
+crm_data.json.backup
+journal.log
+journal.log.1
+audit.log
+audit.log.1
+backups/
+push_keys.json
+push_subs.json
+dl-diag.json
+digylog_cfg.json
+.crm.lock
+.crm.etag
+.dl.lock
+.dl-*.json
+.dl-*.lock
+.dl-*.stamp
+.delivery-auto.*
+.tracking-auto.*
+.*.done

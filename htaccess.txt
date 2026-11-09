@@ -1,0 +1,84 @@
+# AfrizoN CRM — v3.90 (أداء + حماية)
+
+# ─────────────────────────────────────────────────────────────
+# 1) حماية الملفات الحساسة
+#    الداتا، السجلات، النسخ الاحتياطية، وملفات الإعداد ما خاصهومش
+#    يتحملو من الويب.
+# ─────────────────────────────────────────────────────────────
+<FilesMatch "^(crm_data\.json|crm_data\.json\.backup|audit\.log|audit\.log\.1|journal\.log|journal\.log\.1|\.crm\.lock|\.crm\.etag|INSTALL\.txt|.*\.tmp.*)$">
+  Require all denied
+</FilesMatch>
+
+# مجلد النسخ الاحتياطية كامل
+RedirectMatch 404 ^/backups/
+
+# v3.90: أدوات إدارية كانت مكشوفة للعموم بلا حتى كلمة سر.
+#  - import.php      : استيراد الداتا (بلا تحقق)
+#  - manual_sync.php : كان كيصيفط لـ Digylog، وDigylog تحيدات فـ v3.41 → ميت
+#  - dino.html       : صفحة لعبة ما عندها علاقة بالـ CRM
+# recover.php كيطلب token فالـ URL، ولكن خاصو يبقى مسدود عادي.
+<FilesMatch "^(import\.php|manual_sync\.php|recover\.php|dino\.html)$">
+  Require all denied
+</FilesMatch>
+
+# ─────────────────────────────────────────────────────────────
+# 1.b) أدوات التنمية (dev) — ما خاصهاش تتّرفع للويب أصلاً
+#      (dev/server.mjs + package.json + node_modules)
+# ─────────────────────────────────────────────────────────────
+RedirectMatch 404 ^/(dev|node_modules)/
+<FilesMatch "^(package\.json|package-lock\.json|README\.md)$">
+  Require all denied
+</FilesMatch>
+
+Options -Indexes
+
+# ─────────────────────────────────────────────────────────────
+# 2) الضغط (gzip) — أهم ربح فالـ bandwidth
+#    index.html: 1124KB → 313KB   (−72%)
+#    api.php   : 1095KB → 122KB   (−89%)
+# ─────────────────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript
+  AddOutputFilterByType DEFLATE application/json application/xml image/svg+xml
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</IfModule>
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+# ─────────────────────────────────────────────────────────────
+# 3) الكاش
+#    index.html ما كيتكاشاش (خاص التحديثات يوصلو فالحين) ولكن
+#    كيتحقق بـ ETag → إلا ما تبدل، المتصفح كياخد 304 بلا تحميل.
+# ─────────────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.(js|css|woff2?|png|jpg|jpeg|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # api.php كيتكلف براسو بالـ ETag/304 — خلي Apache ما يتدخلش
+  <FilesMatch "^api\.php$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# ETag خاصو يبقى مفعّل — هو أساس الـ 304
+<IfModule mod_headers.c>
+  FileETag MTime Size
+</IfModule>

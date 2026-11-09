@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🦖 Dino Game — AfrizoN</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:linear-gradient(160deg,#eef2ff 0%,#e0e7ff 55%,#ede9fe 100%);
+     display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;overflow:hidden;touch-action:manipulation}
+.top{width:min(900px,100%);display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+.top h1{font-size:18px;font-weight:800;color:#4338ca;display:flex;gap:8px;align-items:center}
+.top h1 span{font-size:12px;font-weight:600;color:#6366f1;background:#fff;border:1px solid #c7d2fe;border-radius:9999px;padding:2px 10px}
+.btns{display:flex;gap:6px}
+.btns button{border:1px solid #c7d2fe;background:#fff;color:#4f46e5;font-family:inherit;font-weight:700;font-size:13px;
+     border-radius:10px;padding:8px 14px;cursor:pointer;transition:.15s}
+.btns button:hover{background:#eef2ff;transform:translateY(-1px)}
+.stage{position:relative;width:min(900px,100%)}
+canvas{display:block;width:100%;border-radius:18px;background:#fff;box-shadow:0 18px 50px rgba(79,70,229,.18);
+     border:1px solid #c7d2fe;touch-action:none}
+.hud{position:absolute;top:10px;right:14px;display:flex;gap:10px;font-weight:800;color:#475569;font-size:14px;
+     background:rgba(255,255,255,.75);border:1px solid #e2e8f0;border-radius:12px;padding:6px 12px;backdrop-filter:blur(4px)}
+.hud b{color:#4338ca}
+.help{margin-top:10px;font-size:12.5px;color:#64748b;text-align:center;line-height:1.9}
+.help kbd{background:#fff;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:6px;padding:1px 7px;font-weight:700;color:#4f46e5;font-size:11.5px}
+#over{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:10px;
+     background:rgba(238,242,255,.82);border-radius:18px;backdrop-filter:blur(3px)}
+#over h2{font-size:26px;color:#be123c;font-weight:800}
+#over p{color:#475569;font-size:14px}
+#over .new{color:#047857;font-weight:800}
+#over button{border:0;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-family:inherit;font-weight:800;
+     font-size:15px;border-radius:12px;padding:12px 30px;cursor:pointer;box-shadow:0 10px 25px rgba(99,102,241,.4)}
+#over button:hover{transform:translateY(-1px)}
+</style>
+<!--PV-DARK-PAGES:BEGIN-->
+<link rel="stylesheet" href="pv-dark-pages.css" id="pv-dark-pages-css">
+<script id="pv-dark-pages-boot">(function(){try{
+var t=localStorage.getItem('pv_theme');
+var os=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
+}catch(e){}})();</script>
+<!--PV-DARK-PAGES:END-->
+</head>
+<body>
+<div class="top">
+  <h1>🦖 Dino Game <span>AfrizoN</span></h1>
+  <div class="btns">
+    <button id="mute">🔊 الصوت</button>
+    <button id="back">🏠 رجوع للـ CRM</button>
+  </div>
+</div>
+<div class="stage">
+  <canvas id="cv" width="900" height="300"></canvas>
+  <div class="hud">SCORE <b id="sc">0</b> · HI <b id="hi">0</b></div>
+  <div id="over"><h2>💀 لعبت!</h2><p id="ovs"></p><button id="again">🔁 عاود اللعب (Space)</button></div>
+</div>
+<div class="help">
+  <kbd>Space</kbd>/<kbd>↑</kbd> ولا ضغطة = قفزة · <kbd>↓</kbd> = انبطاح من الطير · <kbd>P</kbd> = وقفة مؤقتة<br>
+  كل 100 نقطة كتسمع زوجة 🎉 — الصباعات كيزيدو بالسرعة!
+</div>
+<script>
+(function(){
+'use strict';
+var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+var W=900, H=300, groundY=H-52;
+var dpr=Math.min(window.devicePixelRatio||1,2);
+cv.width=W*dpr; cv.height=H*dpr; ctx.scale(dpr,dpr);
+
+var state='ready'; // ready | run | over | pause
+var score=0, hi=Number(localStorage.getItem('afrizon_dino_hi')||0);
+var speed=6, dist=0, night=false;
+var dino={x:58,y:groundY-47,w:44,h:47,vy:0,duck:false,onG:true,leg:0};
+var obs=[], clouds=[], bumps=[], spawnIn=40, flashT=0;
+var muted=false, lastT=0, acc=0;
+
+var scEl=document.getElementById('sc'), hiEl=document.getElementById('hi'), overEl=document.getElementById('over'), ovsEl=document.getElementById('ovs');
+hiEl.textContent=hi;
+
+// ---------- sound (WebAudio beeps) ----------
+var AC=null;
+function beep(f,d,type){
+  if(muted) return;
+  try{
+    AC=AC||new (window.AudioContext||window.webkitAudioContext)();
+    var o=AC.createOscillator(), g=AC.createGain();
+    o.type=type||'square'; o.frequency.value=f;
+    g.gain.setValueAtTime(.06,AC.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,AC.currentTime+d);
+    o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime+d);
+  }catch(e){}
+}
+
+// ---------- world init ----------
+function seedBg(){
+  clouds=[]; for(var i=0;i<4;i++) clouds.push({x:Math.random()*W,y:30+Math.random()*70,s:.4+Math.random()*.5});
+  bumps=[]; for(var j=0;j<26;j++) bumps.push({x:Math.random()*W,w:6+Math.random()*26,h:1+Math.random()*2});
+}
+seedBg();
+
+function reset(){
+  score=0; speed=6; dist=0; night=false; obs=[]; spawnIn=50; flashT=0;
+  dino.y=groundY-dino.h; dino.vy=0; dino.duck=false; dino.onG=true;
+  scEl.textContent='0'; overEl.style.display='none'; seedBg();
+}
+
+function jump(){
+  if(state==='ready'){ reset(); state='run'; }
+  if(state!=='run') return;
+  if(dino.onG){ dino.vy=-13.4; dino.onG=false; beep(520,.09); }
+}
+function duck(on){ dino.duck=on && dino.onG; }
+
+// ---------- spawn ----------
+function spawn(){
+  var r=Math.random();
+  if(score>250 && r<.18){ // طير
+    // v3.77: الطير العميق (خاصك تنبطح) كيبان غير من 350 نقطة
+    var deep=score>350&&Math.random()<.5;
+    var lvl=deep?groundY-47-44:groundY-47-4-Math.random()*8;
+    obs.push({type:'bird',x:W+30,y:lvl,w:42,h:30,fl:0});
+  } else { // صباع
+    // v3.77: 3 صباعات غير قبل 150 نقطة، ومن بعد جوج بالكتير
+    var mx=score<150?3:2, n=1+Math.floor(Math.random()*mx), w=0, parts=[], x=W+30;
+    for(var i=0;i<n;i++){ var hh=34+Math.random()*22; parts.push({dx:w,h:hh,w:12+Math.random()*8}); w+=parts[i].w+5; }
+    obs.push({type:'cactus',x:x,w:w-5,h:56,parts:parts});
+  }
+  // v3.77: فاصل أطول (كان 33 إطار فأحسن حالة — دابا 55)
+  spawnIn=55+Math.random()*80-speed*1.6;
+}
+
+// ---------- update ----------
+function update(){
+  dist+=speed; score=Math.floor(dist/8);
+  scEl.textContent=score;
+  if(score>0&&score%100===0&&flashT<=0){ flashT=18; beep(880,.12,'triangle'); setTimeout(function(){beep(1100,.12,'triangle')},110); }
+  if(flashT>0) flashT--;
+  // v3.77: سرعة أبطأ فالبداية وتسلق أخف (كانت 6→13.5، دابا 5→10.5)
+  speed=Math.min(10.5,5+score*.005);
+  if(score>0&&Math.floor(score/400)%2===1) night=true; else night=false;
+
+  // جاذبية
+  dino.vy+=.72; dino.y+=dino.vy;
+  var floor=groundY-(dino.duck?30:47);
+  if(dino.y>=floor){ dino.y=floor; dino.vy=0; if(!dino.onG){dino.onG=true; beep(240,.05,'sine');} }
+  dino.h=dino.duck?30:47;
+  if(dino.onG&&state==='run') dino.leg+=speed*.35;
+
+  // خلفية
+  for(var i=0;i<clouds.length;i++){ clouds[i].x-=clouds[i].s; if(clouds[i].x<-60){clouds[i].x=W+40;clouds[i].y=25+Math.random()*80;} }
+  for(var j=0;j<bumps.length;j++){ bumps[j].x-=speed; if(bumps[j].x<-40){bumps[j].x=W+Math.random()*40;bumps[j].w=6+Math.random()*26;} }
+
+  // عوائق
+  if(--spawnIn<=0) spawn();
+  for(var k=obs.length-1;k>=0;k--){
+    var o=obs[k]; o.x-=speed;
+    if(o.type==='bird'){ o.fl+=.25; o.y+=Math.sin(o.fl)*.6; }
+    if(o.x+o.w<-10){ obs.splice(k,1); continue; }
+    var dh=dino.duck?30:47;
+    // v3.77: صندوق تصادم متسامح (margin أكبر من كل الجوانب)
+    if(dino.x+7<o.x+o.w-5 && dino.x+dino.w-7>o.x+5 && dino.y+6<o.y+o.h-3 && dino.y+dh-5>o.y+3){
+      state='over'; beep(180,.25,'sawtooth');
+      var isNew=score>hi;
+      if(isNew){ hi=score; localStorage.setItem('afrizon_dino_hi',String(hi)); hiEl.textContent=hi; }
+      ovsEl.innerHTML='النتيجة ديالك: <b>'+score+'</b> · أفضل نتيجة: <b>'+hi+'</b>'+(isNew?'<br><span class="new">🎉 نتيجة جديدة! مبروك!</span>':'');
+      overEl.style.display='flex';
+    }
+  }
+}
+
+// ---------- draw ----------
+function rect(x,y,w,h,c){ ctx.fillStyle=c; ctx.fillRect(x,Math.round(y),w,Math.round(h)); }
+function drawDino(){
+  var G1=night?'#e2e8f0':'#334155', G2=night?'#cbd5e1':'#1e293b';
+  var x=dino.x, y=dino.y, h=dino.h, duck=dino.duck;
+  if(duck){ // انبطاح
+    rect(x,y+8,40,20,G1); rect(x+30,y+2,16,14,G1); rect(x+42,y+5,4,4,G2);
+    rect(x-8,y+14,10,8,G1); // دنبة
+    var ph=Math.floor(dino.leg/6)%2?3:0;
+    rect(x+4,y+28,8,4+ph,G1); rect(x+22,y+28,8,6-ph,G1);
+  } else {
+    rect(x+6,y,20,14,G1);           // راس
+    rect(x+22,y+2,8,6,G1);          // منقار
+    rect(x+18,y+3,4,4,'#fff'), rect(x+19,y+4,2,2,G2); // عين
+    rect(x,y+12,26,20,G1);          // جسم
+    rect(x-8,y+14,10,9,G1);         // دنبة
+    rect(x+24,y+20,7,3,G1);         // دراع
+    var p=Math.floor(dino.leg/6)%2;
+    if(dino.onG){ rect(x+3,y+32,8,h-32-(p?0:2),G1); rect(x+16,y+32,8,h-32-(p?2:0),G1); }
+    else { rect(x+3,y+32,8,8,G1); rect(x+16,y+32,8,10,G1); }
+  }
+}
+function drawCactus(o){
+  var C=night?'#94a3b8':'#15803d';
+  for(var i=0;i<o.parts.length;i++){ var p=o.parts[i]; rect(o.x+p.dx,groundY-p.h,p.w,p.h,C);
+    rect(o.x+p.dx-4,groundY-p.h+8,4,3,C); rect(o.x+p.dx+p.w,groundY-p.h+14,4,3,C); }
+}
+function drawBird(o){
+  var B=night?'#cbd5e1':'#b45309', up=Math.floor(o.fl/4)%2;
+  rect(o.x+8,o.y+10,26,12,B); rect(o.x+30,o.y+6,8,8,B);
+  rect(o.x+34,o.y+7,2,2,'#fff');
+  if(up){ rect(o.x+12,o.y-2,14,10,B); } else { rect(o.x+12,o.y+20,14,8,B); }
+  rect(o.x+2,o.y+12,8,4,B);
+}
+function draw(){
+  // سماء
+  var g=ctx.createLinearGradient(0,0,0,H);
+  if(night){ g.addColorStop(0,'#1e293b'); g.addColorStop(1,'#334155'); }
+  else { g.addColorStop(0,'#f8fafc'); g.addColorStop(1,'#eef2ff'); }
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  // نجوم فالليل
+  if(night){ ctx.fillStyle='rgba(255,255,255,.8)';
+    for(var s=0;s<24;s++){ var sx=(s*137+((score*3)%W))%W, sy=(s*61)%110+8; ctx.fillRect(sx,sy,2,2); } }
+  // غيوم
+  ctx.fillStyle=night?'rgba(148,163,184,.35)':'rgba(148,163,184,.5)';
+  for(var i=0;i<clouds.length;i++){ var c=clouds[i];
+    ctx.beginPath(); ctx.ellipse(c.x,c.y,26*c.s,9*c.s,0,0,7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(c.x+16*c.s,c.y+4*c.s,18*c.s,7*c.s,0,0,7); ctx.fill(); }
+  // الأرض
+  rect(0,groundY+2,W,3,night?'#64748b':'#94a3b8');
+  ctx.fillStyle=night?'rgba(100,116,139,.5)':'rgba(100,116,139,.4)';
+  for(var j=0;j<bumps.length;j++){ var b=bumps[j]; ctx.fillRect(Math.round(b.x),groundY+8+b.h,Math.round(b.w),2); }
+  // عوائق
+  for(var k=0;k<obs.length;k++){ var o=obs[k]; if(o.type==='cactus') drawCactus(o); else drawBird(o); }
+  // الديناصور
+  drawDino();
+  // وميض كل 100
+  if(flashT>0){ ctx.fillStyle='rgba(99,102,241,'+(flashT/60)+')'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=night?'#e2e8f0':'#4338ca'; ctx.font='800 26px Segoe UI,Tahoma'; ctx.textAlign='center';
+    ctx.fillText('🎉 '+score, W/2, 52); }
+  // جاهز؟
+  if(state==='ready'){ ctx.fillStyle=night?'#e2e8f0':'#4338ca'; ctx.font='800 20px Segoe UI,Tahoma'; ctx.textAlign='center';
+    ctx.fillText('اضغط Space ولا ديّر ضغطة باش تبدا 🦖', W/2, H/2-20); }
+  if(state==='pause'){ ctx.fillStyle='rgba(238,242,255,.75)'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#4338ca'; ctx.font='800 26px Segoe UI,Tahoma'; ctx.textAlign='center'; ctx.fillText('⏸ وقفة مؤقتة', W/2, H/2); }
+}
+
+// ---------- loop ----------
+function loop(t){
+  requestAnimationFrame(loop);
+  if(!lastT) lastT=t;
+  var dt=Math.min(50,t-lastT); lastT=t;
+  if(state==='run'){ acc+=dt; while(acc>=16.6){ update(); acc-=16.6; if(state!=='run')break; } }
+  draw();
+}
+requestAnimationFrame(loop);
+
+// ---------- controls ----------
+document.addEventListener('keydown',function(e){
+  if(e.code==='Space'||e.code==='ArrowUp'){ e.preventDefault();
+    if(state==='over'){ reset(); state='run'; } else jump(); }
+  else if(e.code==='ArrowDown'){ e.preventDefault(); duck(true); }
+  else if(e.code==='KeyP'){ if(state==='run')state='pause'; else if(state==='pause'){state='run';lastT=0;} }
+});
+document.addEventListener('keyup',function(e){ if(e.code==='ArrowDown') duck(false); });
+cv.addEventListener('pointerdown',function(e){
+  if(state==='over'){ reset(); state='run'; return; }
+  var r=cv.getBoundingClientRect();
+  if(e.clientY-r.top > (groundY/H)*r.height && dino.onG===false) return;
+  jump();
+});
+document.getElementById('again').addEventListener('click',function(){ reset(); state='run'; });
+document.getElementById('back').addEventListener('click',function(){ location.href='/' });
+var muteBtn=document.getElementById('mute');
+muteBtn.addEventListener('click',function(){ muted=!muted; muteBtn.textContent=muted?'🔇 بلا صوت':'🔊 الصوت'; });
+document.addEventListener('visibilitychange',function(){ if(document.hidden&&state==='run') state='pause'; });
+window.addEventListener('resize',function(){ lastT=0; });
+})();
+</script>
+<script src="pv-dark-pages-sync.js" id="pv-dark-pages-js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "afrizon-crm-dev",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Serveur de développement local (PHP wasm) pour le CRM AfrizoN",
+  "scripts": {
+    "dev": "node dev/server.mjs",
+    "start": "node dev/server.mjs"
+  },
+  "dependencies": {
+    "@php-wasm/node": "^3.1.62",
+    "@php-wasm/universal": "^3.1.62"
+  }
+}

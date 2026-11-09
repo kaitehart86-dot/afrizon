@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 72" width="300" height="72" role="img" aria-label="AfrizoN — AI Commerce OS">
+  <defs>
+    <linearGradient id="pvG2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/><stop offset=".52" stop-color="#7c3aed"/><stop offset="1" stop-color="#06b6d4"/>
+    </linearGradient>
+    <radialGradient id="pvH2" cx=".22" cy=".1" r=".95">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".4"/><stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pvT" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0f172a"/><stop offset="1" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(6,9) scale(1.125)">
+    <rect width="48" height="48" rx="13" fill="url(#pvG2)"/>
+    <rect width="48" height="48" rx="13" fill="url(#pvH2)"/>
+    <rect x=".8" y=".8" width="46.4" height="46.4" rx="12.3" fill="none" stroke="#fff" stroke-opacity=".24" stroke-width="1.1"/>
+    <g fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M24 15.2 33.6 20 24 24.8 14.4 20Z"/>
+      <path d="M14.4 20v9.6L24 34.4l9.6-4.8V20"/>
+      <path d="M24 24.8v9.6"/>
+    </g>
+    <path d="M20.4 20 24 17.6 27.6 20" fill="none" stroke="#fff" stroke-opacity=".9" stroke-width=".9" stroke-linecap="round"/>
+    <g fill="#fff"><circle cx="20.4" cy="20" r="1.35"/><circle cx="27.6" cy="20" r="1.35"/><circle cx="24" cy="17.6" r="1.35"/></g>
+    <path d="M38.2 9.4c.5 2.6 1.2 3.3 3.8 3.8-2.6.5-3.3 1.2-3.8 3.8-.5-2.6-1.2-3.3-3.8-3.8 2.6-.5 3.3-1.2 3.8-3.8Z" fill="#fff" fill-opacity=".96"/>
+  </g>
+  <text x="76" y="38" font-family="Inter,'Segoe UI',system-ui,sans-serif" font-size="25" font-weight="800"
+        letter-spacing="2.6" fill="url(#pvT)">AFRIZON</text>
+  <text x="78" y="55" font-family="Inter,'Segoe UI',system-ui,sans-serif" font-size="10.5" font-weight="700"
+        letter-spacing="3.4" fill="#64748b">AI COMMERCE OS</text>
+</svg>

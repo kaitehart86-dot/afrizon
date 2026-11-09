@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <title>طلبية سريعة — AfrizoN</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; max-width: 100%; overflow-x: hidden; background: #f1f5f9; font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif; color: #0f172a; }
+    .top { position: sticky; top: 0; z-index: 5; background: #0f766e; color: #fff; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .top h1 { font-size: 18px; margin: 0; }
+    .top a { color: #fff; text-decoration: none; background: rgba(255,255,255,.18); padding: 8px 12px; border-radius: 10px; font-size: 14px; }
+    .wrap { max-width: 520px; margin: 0 auto; padding: 16px; }
+    .who { font-size: 14px; color: #334155; margin-bottom: 12px; }
+    .card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 2px 10px rgba(15,23,42,.06); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .full { grid-column: 1 / -1; }
+    label { display: block; font-size: 14px; font-weight: 600; margin: 0 0 6px; color: #334155; }
+    input { width: 100%; height: 50px; padding: 0 14px; font-size: 16px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; color: #0f172a; -webkit-appearance: none; appearance: none; }
+    input:focus { outline: none; border-color: #0f766e; box-shadow: 0 0 0 3px rgba(15,118,110,.15); }
+    input[type=tel] { direction: ltr; text-align: right; }
+    .btn { width: 100%; height: 56px; margin-top: 18px; border: none; border-radius: 14px; background: #0f766e; color: #fff; font-size: 18px; font-weight: 700; cursor: pointer; }
+    .btn:disabled { opacity: .6; }
+    .msg { margin-top: 14px; padding: 12px 14px; border-radius: 12px; font-size: 15px; display: none; line-height: 1.6; }
+    .msg.ok { display: block; background: #dcfce7; color: #166534; }
+    .msg.err { display: block; background: #fee2e2; color: #991b1b; }
+    .login { text-align: center; padding: 30px 10px; }
+    .login a { display: inline-block; margin-top: 12px; background: #0f766e; color: #fff; padding: 12px 18px; border-radius: 12px; text-decoration: none; font-weight: 700; }
+    .hint { font-size: 13px; color: #64748b; margin-top: 10px; text-align: center; }
+  </style>
+<!--PV-DARK-PAGES:BEGIN-->
+<link rel="stylesheet" href="pv-dark-pages.css" id="pv-dark-pages-css">
+<script id="pv-dark-pages-boot">(function(){try{
+var t=localStorage.getItem('pv_theme');
+var os=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
+}catch(e){}})();</script>
+<!--PV-DARK-PAGES:END-->
+</head>
+<body>
+  <div class="top">
+    <h1>➕ طلبية سريعة</h1>
+    <a href="index.html">رجوع للCRM</a>
+  </div>
+
+  <div class="wrap">
+    <div id="noLogin" class="card login" style="display:none">
+      <div style="font-size:16px;font-weight:700">دخل لـCRM بحسابك أولاً</div>
+      <a href="index.html">فتح CRM</a>
+    </div>
+
+    <div id="form" style="display:none">
+      <div class="who" id="who"></div>
+      <form id="f" class="card" autocomplete="off">
+        <div class="row">
+          <div class="full">
+            <label for="nom">الاسم</label>
+            <input id="nom" name="nom" type="text" required />
+          </div>
+          <div class="full">
+            <label for="telephone">الهاتف</label>
+            <input id="telephone" name="telephone" type="tel" inputmode="tel" required />
+          </div>
+          <div>
+            <label for="ville">المدينة</label>
+            <input id="ville" name="ville" type="text" required />
+          </div>
+          <div>
+            <label for="adresse">العنوان</label>
+            <input id="adresse" name="adresse" type="text" required />
+          </div>
+          <div class="full">
+            <label for="produit">المنتوج</label>
+            <input id="produit" name="produit" type="text" required />
+          </div>
+          <div>
+            <label for="qte">الكمية</label>
+            <input id="qte" name="qte" type="number" inputmode="numeric" min="1" value="1" required />
+          </div>
+          <div>
+            <label for="prix">الثمن (DH)</label>
+            <input id="prix" name="prix" type="number" inputmode="decimal" min="0" required />
+          </div>
+        </div>
+        <button id="save" class="btn" type="submit">حفظ الطلبية</button>
+        <div id="msg" class="msg"></div>
+      </form>
+      <div class="hint">الطلبية كتبان فـCRM باسمك أوتوماتيك</div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+    var TOKEN = '8c907fc0f4ffe0b9775a6b7c3c0fc7700e5724c0d78343df';   // نفس التوكن ديال CRM
+    var SESSION_KEY = 'afrizon_session_v1';
+    var USERS_KEY = 'afrizon_users_v1';
+    var AGENTS = ['Meryam', 'AYA', 'imane', 'safa'];
+
+    /* سمية البنت لي داخلة بحسابها */
+    function myAgent() {
+      try {
+        var sid = localStorage.getItem(SESSION_KEY);
+        var users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+        var me = users.find(function (u) { return String(u.id) === String(sid) && !u._del; });
+        return (me && me.agent && AGENTS.indexOf(String(me.agent)) !== -1) ? String(me.agent) : '';
+      } catch (e) { return ''; }
+    }
+    var agent = myAgent();
+    if (!agent) {
+      document.getElementById('noLogin').style.display = 'block';
+      return;
+    }
+    document.getElementById('form').style.display = 'block';
+    document.getElementById('who').textContent = 'الطلبية غادي تتسجل باسم: ' + agent;
+
+    var f = document.getElementById('f');
+    var msg = document.getElementById('msg');
+    var btn = document.getElementById('save');
+    function show(text, ok) {
+      msg.textContent = text;
+      msg.className = 'msg ' + (ok ? 'ok' : 'err');
+    }
+    function todayLocal() {
+      var d = new Date();
+      var m = ('0' + (d.getMonth() + 1)).slice(-2);
+      var day = ('0' + d.getDate()).slice(-2);
+      return d.getFullYear() + '-' + m + '-' + day;
+    }
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var v = function (id) { return document.getElementById(id).value.trim(); };
+      var order = {
+        nom: v('nom'), telephone: v('telephone'), ville: v('ville'), adresse: v('adresse'),
+        produit: v('produit'), qte: v('qte') || '1', prix: v('prix') || '0', dateCreation: todayLocal()
+      };
+      if (!order.nom || !order.telephone || !order.ville || !order.adresse || !order.produit) {
+        show('عمّر كاع الخانات', false); return;
+      }
+      btn.disabled = true; btn.textContent = '...';
+      fetch('api.php', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json', 'X-Sync-Token': TOKEN },
+        body: JSON.stringify({ action: 'quick_order', agent: agent, order: order })
+      }).then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+        .then(function (res) {
+          if (res.j && res.j.ok) {
+            show('✅ الطلبية تسجلات باسمك', true);
+            f.reset();
+            document.getElementById('qte').value = '1';
+            document.getElementById('nom').focus();
+          } else if (res.status === 409) {
+            show('⚠️ هاد الطلبية كاينة deja (نفس الهاتف والمنتوج واليوم)', false);
+          } else {
+            show('❌ ما تسجلاتش (' + ((res.j && res.j.err) || 'error') + ')', false);
+          }
+        })
+        .catch(function () { show('❌ مشكل فالاتصال، عاود المحاولة', false); })
+        .then(function () { btn.disabled = false; btn.textContent = 'حفظ الطلبية'; });
+    });
+  })();
+  </script>
+<script src="pv-dark-pages-sync.js" id="pv-dark-pages-js"></script>
+</body>
+</html>

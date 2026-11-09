@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>إعدادات Digylog — AfrizoN</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #f1f5f9; font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif; color: #0f172a; -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+    .top { background: #0f766e; color: #fff; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .top h1 { font-size: 18px; margin: 0; }
+    .top a { color: #fff; text-decoration: none; background: rgba(255,255,255,.18); padding: 8px 12px; border-radius: 10px; font-size: 14px; }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 16px; }
+    .card { background: #fff; border-radius: 16px; padding: 16px; margin-bottom: 14px; box-shadow: 0 2px 10px rgba(15,23,42,.06); }
+    h2 { font-size: 16px; margin: 0 0 12px; }
+    label { display: block; font-size: 14px; font-weight: 600; margin: 10px 0 6px; color: #334155; }
+    input, select { width: 100%; height: 46px; padding: 0 12px; font-size: 16px; border: 1px solid #cbd5e1; border-radius: 12px; background: #fff; }
+    .hint { font-size: 12px; color: #64748b; margin-top: 4px; }
+    .check { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-weight: 600; }
+    .check input { width: 22px; height: 22px; }
+    .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+    button { height: 48px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; background: #e2e8f0; color: #0f172a; }
+    button.primary { background: #0f766e; color: #fff; grid-column: 1 / -1; }
+    button:disabled { opacity: .6; }
+    pre { background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 12px; font-size: 12px; white-space: pre-wrap; word-break: break-all; max-height: 360px; overflow: auto; direction: ltr; text-align: left; }
+    .msg { margin-top: 10px; padding: 10px 12px; border-radius: 12px; font-size: 14px; display: none; }
+    .msg.ok { display: block; background: #dcfce7; color: #166534; }
+    .msg.err { display: block; background: #fee2e2; color: #991b1b; }
+    .denied { text-align: center; padding: 30px; font-weight: 700; }
+  </style>
+<!--PV-DARK-PAGES:BEGIN-->
+<link rel="stylesheet" href="pv-dark-pages.css" id="pv-dark-pages-css">
+<script id="pv-dark-pages-boot">(function(){try{
+var t=localStorage.getItem('pv_theme');
+var os=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;
+if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
+}catch(e){}})();</script>
+<!--PV-DARK-PAGES:END-->
+</head>
+<body>
+  <div class="top">
+    <h1>⚙️ إعدادات Digylog <span id="apiVer" style="font-size:11px;opacity:.85;font-weight:700"></span></h1>
+    <a href="index.html">رجوع للCRM</a>
+  </div>
+
+  <div class="wrap">
+    <div id="denied" class="card denied" style="display:none">هاد الصفحة غير للأدمين. دخل بحساب الأدمين فـCRM.</div>
+
+    <div id="app" style="display:none">
+      <div class="card">
+        <h2>1) الربط</h2>
+        <label for="token">التوكن (Jeton) ديال Digylog</label>
+        <input id="token" type="password" autocomplete="off" placeholder="اللصق هنا (ما كيبانش من بعد الحفظ)" />
+        <div class="hint" id="tokInfo"></div>
+
+        <label for="network">رقم الشبكة (network)</label>
+        <input id="network" type="number" min="1" value="1" />
+        <div class="hint">كيتجاب من /networks (ديك الخانة كتتأكد بزر "اختبار الاتصال")</div>
+
+        <label>المتاجر (store) ديال كل بنت</label>
+        <div id="storeBox">
+          <input id="st_Meryam" type="text" placeholder="Meryam" />
+          <input id="st_AYA" type="text" placeholder="AYA" style="margin-top:8px" />
+          <input id="st_imane" type="text" placeholder="imane" style="margin-top:8px" />
+          <input id="st_safa" type="text" placeholder="safa" style="margin-top:8px" />
+        </div>
+        <div class="hint">كل بنت كتحتاج متجر (Boutique) ديالها فـ Digylog. إلا بنت جديدة ما لقيتيش، زيدها من التشخيص.</div>
+
+        <label for="sentType">وين كيمشيو الطلبيات</label>
+        <select id="sentType">
+          <option value="0">0 — Commandes non envoyées (المطلوب)</option>
+          <option value="1">1 — يتصيفطو لشركة التوصيل (حقيقي)</option>
+          <option value="2">2 — يتصيفطو لمركز الاتصال</option>
+        </select>
+        <div class="hint">الإرسال التلقائي ديما كيدخل في Commandes non envoyées (0) وما كيصيفطش لحتى شركة.</div>
+
+        <label class="check"><input id="autoSend" type="checkbox" /> الإرسال التلقائي ديال الطلبيات Confirmé (بلا ما تضغط على والو)</label>
+        <div class="hint">هاي هي اللي كتخدم بوحدها: كل طلبية Confirmé و Suivie خاوية كتروح تلقائياً لـ Digylog (Commandes non envoyées) فـ ثواني.</div>
+
+        <label for="defaultStore">المتجر (Boutique) الافتراضي</label>
+        <input id="defaultStore" type="text" placeholder="مثال: Slim-Bio-MR" />
+        <div class="hint">كيستعمل ملي شي بنت ماعندهاش متجر خاص بيها.</div>
+
+        <label class="check"><input id="enabled" type="checkbox" /> تفعيل الإرسال اليدوي (من الصفحة هادي)</label>
+        <div class="hint">غير للاختبار اليدوي. الإرسال التلقائي فوق ما كيتوقفش.</div>
+
+        <div class="btns">
+          <button class="primary" id="save">💾 حفظ</button>
+          <button id="test">🔌 اختبار الاتصال</button>
+          <button id="dry">👀 معاينة (بلا إرسال)</button>
+        </div>
+        <div id="msg" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>2) حالة الإرسال التلقائي</h2>
+        <div class="hint" style="margin-bottom:10px;color:#166534;font-weight:700">تشخيص بلا تغيير: شحال من طلبية مستعدة، واش جات، واش كان الخطأ.</div>
+        <button class="primary" id="diag" style="width:100%">🔎 شوف الحالة دابا</button>
+        <div id="diagOut" class="hint" style="margin-top:10px;direction:ltr;text-align:left"></div>
+      </div>
+
+      <div class="card">
+        <h2>3) جلب Tracking فقط</h2>
+        <div class="hint" style="margin-bottom:10px;color:#166534;font-weight:700">هاد العملية كتكتب غير عمود Tracking. ما كتبدلش Suivie ولا Livrée ولا Retour ولا حتى تاريخ.</div>
+        <label for="sellerToken">Seller Authorization ديال seller.digylog.com</label>
+        <input id="sellerToken" type="password" autocomplete="new-password" placeholder="لسّق Authorization هنا مرة وحدة" />
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><button id="saveSeller" type="button" style="background:#0f766e;color:#fff">حفظ التوكن</button><button id="testSeller" type="button" style="background:#e2e8f0;color:#0f172a">تجربة الاتصال بـDigylog</button></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><button id="copyTok" type="button" style="background:#e2e8f0;color:#0f172a">نسخ من «Seller Authorization» إلى «توكن الـAPI»</button><button id="testApi" type="button" style="background:#e2e8f0;color:#0f172a">تجربة توكن الـAPI</button></div>
+        <div style="font-size:11px;color:#475569;margin-top:6px">التوكن كيقبلو من الديجيلوج فـ «Configuration de l’API» (Copier le jeton). حطو فـ الخانة ديال <b>توكن الـAPI</b> (أو Seller Authorization) — السيرفر كيجربهم كاملين بوحدو.</div>
+        <div id="sellerTokInfo" class="hint" style="margin-top:7px;font-weight:700">كنتحقق من الإعداد…</div>
+        <div class="hint" style="margin-top:5px">كيتحفظ مخفي فالسيرفر وما كيبانش للمستخدمين. إلا سالات صلاحيته، رجع لهنا وجدّدو.</div>
+        <button class="primary" id="syncTracking" style="width:100%;margin-top:12px">حفظ وتشغيل جلب Tracking الآن</button>
+      </div>
+
+      <div class="card">
+        <h2>4) مزامنة Suivie من Digylog</h2>
+        <div class="hint" style="margin-bottom:10px;color:#166534;font-weight:700">كتقرا الحالة الحقيقية باستعمال Tracking فقط: Livrée كتبقى Livrée وRetournée كتولي Retour. ما كتبدل حتى عمود آخر.</div>
+        <label for="deliveryTracking">Tracking ديال الطلبية (اختياري)</label>
+        <input id="deliveryTracking" type="text" autocomplete="off" placeholder="مثال: S8363F49B8" style="direction:ltr;text-align:left;text-transform:uppercase" />
+        <div class="hint" style="margin-top:6px">دخل Tracking باش تفحص طلبية بعينها دابا. إلا خليتيه فارغ كيتفحصو 20 طلبية تلقائياً.</div>
+        <button class="primary" id="syncDelivery" style="width:100%;margin-top:12px">🔄 مزامنة Suivie الآن</button>
+      </div>
+
+      <div class="card">
+        <h2>نتيجة</h2>
+        <pre id="out">—</pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    'use strict';
+    var TOKEN = '8c907fc0f4ffe0b9775a6b7c3c0fc7700e5724c0d78343df';   // نفس التوكن ديال CRM
+    var AGENTS = ['Meryam', 'AYA', 'imane', 'safa'];
+    var DEFAULT_STORES = { Meryam: 'Slim-Bio-MR', AYA: 'Slim-Bio-Ay', imane: 'Slim-Bio-IM', safa: 'Slim-Bio-Sf' };
+
+    function isAdmin() {
+      try {
+        var sid = localStorage.getItem('afrizon_session_v1');
+        var users = JSON.parse(localStorage.getItem('afrizon_users_v1') || '[]');
+        var me = users.find(function (u) { return String(u.id) === String(sid) && !u._del; });
+        return !!(me && me.role === 'admin');
+      } catch (e) { return false; }
+    }
+    if (!isAdmin()) { document.getElementById('denied').style.display = 'block'; return; }
+    document.getElementById('app').style.display = 'block';
+
+    var $ = function (id) { return document.getElementById(id); };
+    function sellerTokenValue() {
+      var el = document.getElementById('sellerToken');
+      return el ? String(el.value || '').trim() : '';
+    }
+    var msg = $('msg');
+    function show(text, ok) { msg.textContent = text; msg.className = 'msg ' + (ok ? 'ok' : 'err'); }
+    function out(obj) { $('out').textContent = JSON.stringify(obj, null, 2); }
+    function call(body) {
+      return fetch('api.php', {
+        method: 'POST', cache: 'no-store',
+        headers: { 'Content-Type': 'application/json', 'X-Sync-Token': TOKEN },
+        body: JSON.stringify(body)
+      }).then(function (r) { return r.json(); });
+    }
+    function storeInputs() {
+      var box = $('storeBox');
+      var out = [];
+      Array.prototype.forEach.call(box.querySelectorAll('input'), function (i) { out.push(i); });
+      return out;
+    }
+    function storesValue() {
+      var s = {};
+      storeInputs().forEach(function (i) {
+        var a = i.getAttribute('data-agent') || i.id.replace(/^st_/, '');
+        var v = i.value.trim();
+        if (a) s[a] = v;
+      });
+      return s;
+    }
+    function renderStores(stores, agents) {
+      var box = $('storeBox');
+      var names = {};
+      AGENTS.forEach(function (a) { names[a] = 1; });
+      (agents || []).forEach(function (a) { if (a) names[a] = 1; });
+      Object.keys(stores || {}).forEach(function (a) { if (a) names[a] = 1; });
+      var list = Object.keys(names).sort();
+      box.innerHTML = '';
+      list.forEach(function (a) {
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.id = 'st_' + a;
+        inp.setAttribute('data-agent', a);
+        inp.placeholder = a;
+        inp.value = (stores && stores[a]) ? stores[a] : (DEFAULT_STORES[a] || '');
+        if (box.children.length) inp.style.marginTop = '8px';
+        box.appendChild(inp);
+      });
+    }
+    function applyAgentStores(as){
+      if(!as) return;
+      Object.keys(as).forEach(function(a){
+        var el=document.getElementById('st_'+a);
+        if(el && !String(el.value||'').trim() && as[a]) el.value=as[a];
+      });
+    }
+    function fill(cfg) {
+      $('apiVer').textContent = cfg.apiVersion ? ('· v' + cfg.apiVersion) : '';
+      $('network').value = cfg.network || 1;
+      $('sentType').value = String(cfg.sentType || 0);
+      $('enabled').checked = !!cfg.enabled;
+      $('autoSend').checked = cfg.autoSend === undefined ? true : !!cfg.autoSend;
+      $('defaultStore').value = cfg.defaultStore || '';
+      renderStores(cfg.stores || {}, cfg.agents || []);
+
+      $('tokInfo').textContent = cfg.hasToken ? ('✅ توكن محفوظ (…' + cfg.tokenTail + ')') : '⚠️ ما كاينش توكن بعد';
+      $('sellerTokInfo').textContent = cfg.hasSellerToken ? ('✅ Seller Authorization محفوظ (…' + cfg.sellerTokenTail + ') — الجلب الأوتوماتيكي خدام') : '❌ Seller Authorization مازال ما محفوظش — Tracking الأوتوماتيكي ما يقدرش يخدم';
+      $('sellerTokInfo').style.color = cfg.hasSellerToken ? '#166534' : '#b91c1c';
+    }
+
+    call({ action: 'digylog_admin', op: 'get' }).then(function (j) {
+      if (j && j.ok) { fill(j.cfg); out(j); applyAgentStores(j.agentStores); }
+      else show('❌ ما قدرتش نجيب الإعدادات (' + ((j && j.err) || 'error') + ')', false);
+      /* the stores of every agent are computed on the server: fill the empty boxes */
+      call({ action: 'digylog_admin', op: 'status' }).then(function (d) {
+        if (d && d.ok) { out(d); applyAgentStores(d.agentStores); }
+      }).catch(function () { });
+    }).catch(function () { show('❌ مشكل فالاتصال', false); });
+
+    function run(btn, body, after) {
+      btn.disabled = true;
+      call(body).then(function (j) { out(j); after(j); })
+        .catch(function () { show('❌ مشكل فالاتصال', false); })
+        .then(function () { btn.disabled = false; });
+    }
+
+    $('save').onclick = function () {
+      var body = {
+        action: 'digylog_admin', op: 'save',
+        network: parseInt($('network').value, 10) || 1,
+        sentType: parseInt($('sentType').value, 10),
+        stores: storesValue(),
+        defaultStore: $('defaultStore').value.trim(),
+        autoSend: $('autoSend').checked ? 1 : 0,
+        enabled: $('enabled').checked ? 1 : 0
+      };
+      var t = $('token').value.trim();
+      if (t) body.token = t;
+      var stk = sellerTokenValue();
+      if (stk) body.sellerToken = stk;
+      run($('save'), body, function (j) {
+        if (j.ok) { show('✅ تحفظات', true); $('token').value = ''; call({ action: 'digylog_admin', op: 'get' }).then(function (g) { if (g.ok) fill(g.cfg); }); }
+        else show('❌ ما تحفظاتش (' + (j.err || 'error') + ')', false);
+      });
+    };
+    $('test').onclick = function () {
+      run($('test'), { action: 'digylog_admin', op: 'test' }, function (j) {
+        show(j.ok ? 'ℹ️ شوف النتيجة تحت' : '❌ ' + (j.err || 'error'), !!j.ok);
+      });
+    };
+    $('dry').onclick = function () {
+      run($('dry'), { action: 'digylog_admin', op: 'dry' }, function (j) {
+        show(j.ok ? '👀 هادي الطلبيات لي غاديين يمشيو (ما تصيفطاتش)' : '❌ ' + (j.err || 'error'), !!j.ok);
+      });
+    };
+    $('diag').onclick = function () {
+      var btn=$('diag'); btn.disabled=true; $('diagOut').textContent='...';
+      call({ action: 'digylog_admin', op: 'status' }).then(function (j) {
+        btn.disabled=false;
+        if (!j || !j.ok) { $('diagOut').textContent='خطأ: '+((j&&j.err)||'error'); return; }
+        var st=j.status, last=st.lastRun||{};
+        var lines=[];
+        lines.push('نسخة السيرفر: '+(st.apiVersion||'?')+' (جيل المرسل '+(st.senderGen||'?')+')');
+        lines.push('token: '+(st.hasToken?'✅ موجود':'❌ ما كاينش — بلا توكن ما يمكنرش نرسلو'));
+        lines.push('autoSend: '+(st.autoSend?'✅ مفعّل':'❌ موقوف'));
+        lines.push('طلبيات مستعدة (Confirmé + Suivie خاوية): '+st.eligible);
+        lines.push('منهم تبعتو مزيان: '+st.alreadySent);
+        lines.push('بلا متجر (Boutique): '+st.noStore);
+        lines.push('رقم هاتف ماشي صحيح: '+st.badPhone);
+        lines.push('المتاجر Discovery: '+(st.boutiques&&st.boutiques.length?st.boutiques.join(', '):'(ماكاينش)'));
+        var as=st.agentStores||{};
+        var ak=Object.keys(as);
+        if(ak.length) lines.push('المتجر ديال كل بنت (محسوب): '+ak.map(function(a){return a+' → '+as[a];}).join(' | '));
+        /* المتاجر المحسوبة كتملأ الخانات الخاوية (باش تبان التوجيه ديال كل بنت) */
+        applyAgentStores(as);
+        lines.push('الشبكات Discovery: '+((st.networks&&st.networks.length)?st.networks.map(function(n){return n.id+' '+(n.name||'');}).join(', '):'(ماكاينش)'));
+        lines.push('متجر افتراضي: '+(st.defaultStore||'(ماكاينش)'));
+        lines.push('آخر تشغيل: '+(last.when?new Date(last.when).toLocaleString():'(مازال عمرو)')+' | بعت: '+(last.sent||0)+' | فشل: '+(last.failed||0));
+        if (last.errors && Object.keys(last.errors).length) lines.push('أخطاء: '+JSON.stringify(last.errors).slice(0,900));
+        var pend=st.pending||[];
+        if(pend.length){
+          lines.push('--- الطلبيات لي مازال ما تصيفطاتش ---');
+          pend.slice(0,25).forEach(function(p){
+            lines.push('#'+p.id+' | '+(p.agent||'-')+' | محاولات: '+p.tries+(p.stale?' (ستانج: غادي تجرب من جديد)':'')+(p.err?(' | خطأ: '+p.err):''));
+          });
+        }
+        $('diagOut').textContent=lines.join('\n');
+      }).catch(function () { btn.disabled=false; $('diagOut').textContent='مشكل فالاتصال'; });
+    };
+
+    var saveSellerBtn = $('saveSeller'), testSellerBtn = $('testSeller');
+    if (saveSellerBtn) saveSellerBtn.onclick = async function () {
+      var tk = sellerTokenValue();
+      if (!tk) { show('❌ لصق توكن Seller Authorization أولا', false); return; }
+      saveSellerBtn.disabled = true;
+      try {
+        show('⏳ كنحفظ Seller Authorization…', true);
+        var saved = await call({ action: 'digylog_admin', op: 'tracking_token_save', sellerToken: tk });
+        if (!saved.ok) throw new Error(saved.err || 'save');
+        $('sellerToken').value = '';
+        var fresh = await call({ action: 'digylog_admin', op: 'get' });
+        if (fresh.ok) fill(fresh.cfg);
+        show('✅ Seller Authorization تحفظ (…' + (saved.sellerTokenTail || '?') + ')', true);
+      } catch (e) { show('❌ ' + (e.message || 'error'), false); }
+      finally { saveSellerBtn.disabled = false; }
+    };
+    if (testSellerBtn) testSellerBtn.onclick = async function () {
+      var tk = sellerTokenValue();
+      if (!tk) { show('❌ لصق توكن Seller Authorization أولا', false); return; }
+      testSellerBtn.disabled = true;
+      try {
+        show('⏳ كتجرب التوكن مع Digylog…', true);
+        var r = await call({ action: 'digylog_admin', op: 'seller_test', sellerToken: tk });
+        if (!r.ok) throw new Error(r.err || 'test');
+        if (r.authOk) show('✅ التوكن خدام! Digylog ردّ (HTTP ' + r.code + ').', true);
+        else show('❌ Digylog رفض التوكن (HTTP ' + r.code + ') — ' + String(r.detail || '').slice(0, 200), false);
+        out(r);
+      } catch (e) { show('❌ ' + (e.message || 'error'), false); }
+      finally { testSellerBtn.disabled = false; }
+    };
+
+    $('copyTok').onclick = function () {
+      var tk = sellerTokenValue();
+      if (!tk) { show('❌ ما كاين حتى توكن فـ «Seller Authorization»', false); return; }
+      $('token').value = tk;
+      show('✅ نسخنا التوكن. دوز «حفظ» باش يتحفظ.', true);
+    };
+
+    $('testApi').onclick = async function () {
+      var btn = $('testApi'); btn.disabled = true;
+      show('⏳ كنجربو كل التوكنات على API ديال Digylog…', true);
+      try {
+        var r = await call({ action: 'digylog_admin', op: 'api_test' });
+        if (!r.ok || !r.results || !r.results.length) throw new Error(r.err || 'no-token');
+        var lines = r.results.map(function (x) {
+          return (x.field + ' …' + x.tail + '  →  HTTP ' + x.code + (x.ok ? '  ✅ خدام' : '  ❌ ' + String(x.detail || '').slice(0, 160)));
+        });
+        var good = r.results.filter(function (x) { return x.ok; });
+        out(r);
+        if (good.length) show('✅ توكن خدام: ' + good.map(function (x) { return x.field + ' …' + x.tail; }).join(' / ') + ' — اضغط «حفظ» باش يتخزن.', true);
+        else show('❌Digylog رفض كل التوكنات:\n' + lines.join('\n'), false);
+      } catch (e) { show('❌ ' + (e.message || 'error'), false); }
+      finally { btn.disabled = false; }
+    };
+
+    $('syncDelivery').onclick = function () {
+      var tracking=$('deliveryTracking').value.trim().toUpperCase();
+      show('⏳ كنقرا الحالة الحقيقية من Digylog…',true);
+      run($('syncDelivery'), {action:'digylog_admin',op:'delivery_sync',tracking:tracking}, function (j) {
+        if(!j.ok){ show('❌ المزامنة فشلات ('+(j.err||'error')+')',false); return; }
+        if(Number(j.updated||0)>0){ show('✅ تمت المزامنة: Suivie تبدلات بنجاح.',true); return; }
+        if(Number(j.returned||0)>0||Number(j.delivered||0)>0){ show('✅ الحالة متزامنة ديجا وما محتاجاش تبديل.',true); return; }
+        if(Number(j.httpErrors||0)>0){ show('❌ Digylog رفض أو ما لقا Tracking. راجع التوكن وTracking.',false); return; }
+        if(Number(j.ambiguous||0)>0){ show('❌ نفس Tracking مكرر فالـCRM، لذلك ما تبدلات حتى طلبية.',false); return; }
+        if(Number(j.checked||0)===0){ show('❌ Tracking ما موجودش فالـCRM أو الطلبية ديجا Retour.',false); return; }
+        show('ℹ️ Digylog جاوب ولكن الحالة الحالية ماشي Livrée ولا Retournée.',true);
+      });
+    };
+    $('syncTracking').onclick = async function () {
+      var btn=$('syncTracking'), token=$('sellerToken').value.trim();
+      if(!token){ show('❌ لسّق Seller Authorization أولاً',false); return; }
+      btn.disabled=true;
+      try {
+        show('⏳ كنحفظ Seller Authorization فالسيرفر…',true);
+        var saved=await call({action:'digylog_admin',op:'tracking_token_save',sellerToken:token});
+        if(!saved.ok)throw new Error(saved.err||'token-save');
+        show('⏳ كنوجد الطلبيات اللي ناقصها Tracking…',true);
+        var c=await call({action:'digylog_admin',op:'tracking_candidates'});
+        if(!c.ok)throw new Error(c.err||'candidates');
+        var ids=c.ids||[], checked=0, linked=0, ambiguous=0, notFound=0;
+        for(var i=0;i<ids.length;i+=20){
+          show('⏳ Tracking فقط: '+Math.min(i+20,ids.length)+' / '+ids.length,true);
+          var r=await call({action:'digylog_admin',op:'tracking_sync',ids:ids.slice(i,i+20)});
+          if(!r.ok)throw new Error(r.err||'sync');
+          checked+=Number(r.checked||0);linked+=Number(r.linked||0);ambiguous+=Number(r.ambiguous||0);notFound+=Number(r.notFound||0);
+          out({ok:true,trackingOnly:true,total:ids.length,progress:Math.min(i+20,ids.length),checked:checked,linked:linked,ambiguous:ambiguous,notFound:notFound});
+        }
+        $('sellerToken').value='';
+        var fresh=await call({action:'digylog_admin',op:'get'});if(fresh.ok)fill(fresh.cfg);
+        show('✅ Seller Authorization تحفظ. تعمّر Tracking ديال '+linked+' طلبية، والباقي غادي يتراجع أوتوماتيكياً.',true);
+      } catch(e){ show('❌ '+(e.message||'error'),false); }
+      finally{btn.disabled=false;}
+    };
+  })();
+  </script>
+<script src="pv-dark-pages-sync.js" id="pv-dark-pages-js"></script>
+</body>
+</html>
