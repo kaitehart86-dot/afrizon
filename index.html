@@ -2184,6 +2184,146 @@ html[data-pv-theme="dark"] .afx-err{background:#2a1215;border-color:#7f1d1d;colo
 }
 
 </style>
+<style id="afx-app">
+/* ══════════════════════════════════════════════════════════════════════
+   AfrizoN CRM — Design System v2 (شكل جديد كامل للتطبيق)
+   ══════════════════════════════════════════════════════════════════════ */
+#root{
+  --ax-navy:#0f2a5c; --ax-navy-2:#16365e; --ax-ink:#0b1b33;
+  --ax-emerald:#10b981; --ax-teal:#2dd4bf; --ax-gold:#f5b740;
+  --ax-line:#e6ecf5; --ax-line-2:#dfe7f2; --ax-surface:#ffffff;
+  --ax-muted:#64748b; --ax-bg:#f5f8fc;
+  --ax-radius:18px;
+  font-feature-settings:"cv11","ss01";
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── خلفية التطبيق ── */
+#root > div.flex.h-dvh{
+  background:
+    radial-gradient(1100px 520px at 100% -8%,rgba(16,185,129,.10),transparent 62%),
+    radial-gradient(900px 460px at -10% 105%,rgba(15,42,92,.10),transparent 62%),
+    linear-gradient(180deg,#f7fafd 0%,#f2f6fb 100%) !important;
+}
+#root .bg-slate-100{background:transparent !important}
+#root .bg-slate-50{background:transparent !important}
+
+/* ── الهيدر ── */
+#root header{
+  position:relative;background:rgba(255,255,255,.86) !important;
+  -webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);
+  border-bottom:1px solid var(--ax-line) !important;
+  box-shadow:0 10px 30px -24px rgba(15,42,92,.55) !important;
+}
+#root header::before{
+  content:"";position:absolute;inset:0 0 auto 0;height:3px;
+  background:linear-gradient(90deg,var(--ax-navy) 0%,#1c4f86 26%,var(--ax-emerald) 62%,var(--ax-gold) 100%);
+}
+#root .pv-admin-top{padding-top:10px !important}
+
+/* ── شريط التنقل الرئيسي: من شريط غامق → شريط فاتح أنيق ── */
+#root .pv-main-nav{
+  background:linear-gradient(180deg,#ffffff,#fbfdff) !important;
+  border:1px solid var(--ax-line) !important;
+  border-radius:16px !important;
+  padding:6px !important;gap:4px !important;
+  margin:9px 12px 11px !important;
+  box-shadow:0 12px 28px -24px rgba(15,42,92,.9),0 1px 0 #fff inset !important;
+  --tw-ring-shadow:0 0 #0000 !important;box-shadow:0 12px 28px -24px rgba(15,42,92,.9) !important;
+}
+#root .pv-main-nav > div{
+  background:transparent !important;background-image:none !important;
+  border:1px solid transparent !important;color:#47597a !important;
+  box-shadow:none !important;border-radius:11px !important;
+  height:34px !important;padding-left:12px !important;padding-right:12px !important;
+  font-weight:800 !important;
+}
+#root .pv-main-nav > div:hover{
+  background:#f1f5fa !important;color:var(--ax-navy) !important;transform:none !important;
+}
+#root .pv-main-nav > div[class*="border-white/40"]{
+  background:linear-gradient(180deg,#1b3f6b,#0f2a5c) !important;
+  color:#ffffff !important;border-color:transparent !important;
+  box-shadow:0 10px 20px -12px rgba(15,42,92,.95),0 0 0 1px rgba(255,255,255,.06) inset !important;
+  --tw-ring-shadow:0 0 #0000 !important;
+}
+#root .pv-main-nav > div[class*="border-white/40"]::after{
+  content:"";position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);
+  width:18px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--ax-emerald),var(--ax-gold));
+}
+
+/* ── البطاقات ── */
+#root .rounded-2xl{border-radius:var(--ax-radius) !important}
+#root .rounded-xl{border-radius:12px !important}
+#root .border-slate-200{border-color:var(--ax-line) !important}
+#root .border-slate-300{border-color:var(--ax-line-2) !important}
+#root .shadow-sm{box-shadow:0 1px 2px rgba(15,42,92,.04),0 10px 24px -18px rgba(15,42,92,.28) !important}
+#root .shadow-md{box-shadow:0 12px 28px -18px rgba(15,42,92,.35) !important}
+
+/* ── الجداول ── */
+#root table{border-collapse:separate !important;border-spacing:0 !important;font-variant-numeric:tabular-nums}
+#root thead th{
+  background:linear-gradient(180deg,#16365e,#0f2a5c) !important;
+  color:#e9f1fb !important;border-color:rgba(255,255,255,.10) !important;
+  font-weight:800 !important;letter-spacing:.01em;
+  position:sticky;top:0;z-index:2;
+  box-shadow:0 1px 0 rgba(255,255,255,.06) inset;
+}
+#root tbody td{border-color:#eef3f9 !important}
+#root tbody tr:hover td{box-shadow:inset 0 0 0 99px rgba(16,185,129,.045)}
+#root tbody input,#root tbody select,#root tbody textarea{
+  border:0 !important;background:transparent !important;box-shadow:none !important;border-radius:6px !important;
+}
+#root tbody input:focus,#root tbody select:focus,#root tbody textarea:focus{
+  background:#fff !important;box-shadow:0 0 0 2px rgba(16,185,129,.35) !important;
+}
+
+/* ── الحقول ── */
+#root input:not([type=checkbox]):not([type=radio]):not([type=file]),
+#root select,#root textarea{
+  border-radius:10px !important;border-color:var(--ax-line-2) !important;
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
+}
+#root input:not([type=checkbox]):not([type=radio]):not([type=file]):focus,
+#root select:focus,#root textarea:focus{
+  outline:none !important;border-color:var(--ax-emerald) !important;
+  box-shadow:0 0 0 3px rgba(16,185,129,.16) !important;
+}
+
+/* ── أزرار ── */
+#root button{transition:transform .12s ease,box-shadow .12s ease,filter .12s ease}
+#root button:active{transform:scale(.985)}
+
+/* ── شرائط التمرير ── */
+#root *::-webkit-scrollbar{width:10px;height:10px}
+#root *::-webkit-scrollbar-track{background:transparent}
+#root *::-webkit-scrollbar-thumb{background:#cfd9e6;border-radius:99px;border:3px solid transparent;background-clip:content-box}
+#root *::-webkit-scrollbar-thumb:hover{background:#aebccd;background-clip:content-box}
+
+/* ── شرائح الحالة (badges) ── */
+#root .rounded-full.bg-emerald-50,#root .rounded-full.bg-indigo-50{
+  box-shadow:0 1px 0 rgba(255,255,255,.7) inset;
+}
+
+/* ── مود ليلي ── */
+html[data-pv-theme="dark"] #root > div.flex.h-dvh{
+  background:
+    radial-gradient(1000px 480px at 100% -8%,rgba(16,185,129,.14),transparent 62%),
+    linear-gradient(180deg,#070f1d,#0a1526) !important;
+}
+html[data-pv-theme="dark"] #root header{
+  background:rgba(10,20,34,.88) !important;border-bottom-color:#1d2c44 !important;
+}
+html[data-pv-theme="dark"] #root .pv-main-nav{
+  background:linear-gradient(180deg,#111d31,#0d1829) !important;border-color:#22334d !important;
+}
+html[data-pv-theme="dark"] #root .pv-main-nav > div{color:#9fb3cd !important}
+html[data-pv-theme="dark"] #root .pv-main-nav > div:hover{background:#17253a !important;color:#fff !important}
+html[data-pv-theme="dark"] #root thead th{background:linear-gradient(180deg,#122032,#0d1826) !important}
+html[data-pv-theme="dark"] #root tbody td{border-color:#1e2c42 !important}
+html[data-pv-theme="dark"] #root .border-slate-200{border-color:#21314a !important}
+
+</style>
 </head>
   <body>
 <!--PV-BRAND-SPLASH:BEGIN-->
