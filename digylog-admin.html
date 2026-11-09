@@ -27,6 +27,12 @@
     .msg.ok { display: block; background: #dcfce7; color: #166534; }
     .msg.err { display: block; background: #fee2e2; color: #991b1b; }
     .denied { text-align: center; padding: 30px; font-weight: 700; }
+    .carrier { border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px; margin-bottom: 10px; background: #f8fafc; }
+    .carrier-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .carrier-head b { font-size: 15px; }
+    .carrier .check { margin: 0; font-size: 13px; }
+    .carrier .check input { width: 18px; height: 18px; }
+    .carrier input[type=text], .carrier input[type=password], .carrier input[type=number] { height: 40px; font-size: 14px; }
   </style>
 <!--PV-DARK-PAGES:BEGIN-->
 <link rel="stylesheet" href="pv-dark-pages.css" id="pv-dark-pages-css">
@@ -86,6 +92,16 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
           <button id="dry">👀 معاينة (بلا إرسال)</button>
         </div>
         <div id="msg" class="msg"></div>
+      </div>
+
+      <div class="card">
+        <h2>شركات الشحن الخمسة</h2>
+        <div class="hint" style="margin-bottom:10px">فعّل الشركات اللي كتخدمو بيها وحط التوكن ديال كل وحدة. الطلبية ملي كتولي <b>Confirmé</b> ما كتمشيش لوحدها — كتبقى حتى نختارو ليها شركة.</div>
+        <div id="carrierBox"></div>
+        <div class="btns" style="grid-template-columns:1fr">
+          <button class="primary" id="saveCarriers">💾 حفظ شركات الشحن</button>
+        </div>
+        <div id="msg2" class="msg"></div>
       </div>
 
       <div class="card">
@@ -211,6 +227,7 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
       $('autoSend').checked = cfg.autoSend === undefined ? true : !!cfg.autoSend;
       $('defaultStore').value = cfg.defaultStore || '';
       renderStores(cfg.stores || {}, cfg.agents || []);
+      renderCarriers(cfg.carriers || []);
 
       $('tokInfo').textContent = cfg.hasToken ? ('✅ توكن محفوظ (…' + cfg.tokenTail + ')') : '⚠️ ما كاينش توكن بعد';
       $('sellerTokInfo').textContent = cfg.hasSellerToken ? ('✅ Seller Authorization محفوظ (…' + cfg.sellerTokenTail + ') — الجلب الأوتوماتيكي خدام') : '❌ Seller Authorization مازال ما محفوظش — Tracking الأوتوماتيكي ما يقدرش يخدم';
@@ -232,6 +249,55 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
         .catch(function () { show('❌ مشكل فالاتصال', false); })
         .then(function () { btn.disabled = false; });
     }
+
+    /* ── شركات الشحن ── */
+    function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; }); }
+    function renderCarriers(list) {
+      var box = $('carrierBox');
+      if (!box) return;
+      box.innerHTML = '';
+      (list || []).forEach(function (c) {
+        var row = document.createElement('div');
+        row.className = 'carrier';
+        row.setAttribute('data-id', c.id);
+        row.innerHTML =
+          '<div class="carrier-head"><b>' + esc(c.name) + '</b>' +
+            '<label class="check"><input type="checkbox" data-f="enabled" ' + (c.enabled ? 'checked' : '') + '/> مفعّلة</label></div>' +
+          '<input data-f="token" type="password" autocomplete="new-password" style="margin-top:8px" placeholder="' +
+            (c.hasToken ? ('توكن محفوظ …' + esc(c.tokenTail) + ' — حط واحد جديد باش تبدلو') : 'التوكن (Jeton) ديال ' + esc(c.name)) + '"/>' +
+          '<input data-f="apiUrl" type="text" dir="ltr" style="margin-top:8px" placeholder="API URL (اختياري)" value="' + esc(c.apiUrl) + '"/>' +
+          '<div style="display:grid;grid-template-columns:1fr 92px;gap:8px;margin-top:8px">' +
+            '<input data-f="store" type="text" placeholder="المتجر / Boutique" value="' + esc(c.store) + '"/>' +
+            '<input data-f="network" type="number" min="1" value="' + (c.network || 1) + '"/>' +
+          '</div>';
+        box.appendChild(row);
+      });
+    }
+    function carriersValue() {
+      var out = {};
+      Array.prototype.forEach.call($('carrierBox').querySelectorAll('.carrier'), function (row) {
+        var id = row.getAttribute('data-id');
+        var o = { enabled: row.querySelector('[data-f=enabled]').checked ? 1 : 0,
+                  token: row.querySelector('[data-f=token]').value.trim(),
+                  apiUrl: row.querySelector('[data-f=apiUrl]').value.trim(),
+                  store: row.querySelector('[data-f=store]').value.trim(),
+                  network: parseInt(row.querySelector('[data-f=network]').value, 10) || 1 };
+        out[id] = o;
+      });
+      return out;
+    }
+    $('saveCarriers').onclick = function () {
+      var b = $('saveCarriers'), m2 = $('msg2');
+      b.disabled = true;
+      call({ action: 'digylog_admin', op: 'save', carriers: carriersValue() }).then(function (j) {
+        if (j && j.ok) {
+          m2.textContent = '✅ تحفظو شركات الشحن';
+          m2.className = 'msg ok';
+          call({ action: 'digylog_admin', op: 'get' }).then(function (g) { if (g.ok) { fill(g.cfg); out(g); } });
+        } else { m2.textContent = '❌ ' + ((j && j.err) || 'error'); m2.className = 'msg err'; }
+      }).catch(function () { m2.textContent = '❌ مشكل فالاتصال'; m2.className = 'msg err'; })
+        .then(function () { b.disabled = false; });
+    };
 
     $('save').onclick = function () {
       var body = {

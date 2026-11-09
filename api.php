@@ -908,7 +908,7 @@ function crm_quick_order($b) {
  *   غير الطلبيات لي تأكدات (statut = Confirmé) بعد التفعيل (_f.statut >= since).
  * ================================================================ */
 function crm_dl_base() { return 'https://api.digylog.com/api/v2/seller'; }
-function crm_dl_agents() { return array('Meryam', 'AYA', 'imane', 'safa'); }
+function crm_dl_agents() { return array(); }   /* AfrizoN: بلا بنات مثبّتين — كيجيو من الحسابات */
 function crm_dl_cfg_paths() {
   global $DATA_DIR, $DIR_LOC, $DIR_EXT;
   $paths = array();
@@ -1372,6 +1372,40 @@ function crm_dl_admin_agents() {
   sort($agents);
   return $agents;
 }
+/* ══════════════════════════════════════════════════════════════════
+   v4.0 — شركات الشحن (Multi-carrier): amexx · degylog · oliverson · colix · forcelog
+   كل شركة عندها إعداداتها بوحدها (تفعيل، API، توكن، متجر، شبكة).
+   ══════════════════════════════════════════════════════════════════ */
+function crm_dl_carriers_default() {
+  return array(
+    'degylog'   => array('name'=>'Digylog',   'kind'=>'digylog'),
+    'amexx'     => array('name'=>'AmeXX',     'kind'=>'api'),
+    'oliverson' => array('name'=>'Oliverson', 'kind'=>'api'),
+    'colix'     => array('name'=>'Colix',     'kind'=>'api'),
+    'forcelog'  => array('name'=>'Forcelog',  'kind'=>'api'),
+  );
+}
+/* كترجع الشركات بلا التوكنات (غير آخر 4 حروف للتأكيد) */
+function crm_dl_carriers($c) {
+  $out = array();
+  $saved = (isset($c['carriers']) && is_array($c['carriers'])) ? $c['carriers'] : array();
+  foreach (crm_dl_carriers_default() as $id => $def) {
+    $r = (isset($saved[$id]) && is_array($saved[$id])) ? $saved[$id] : array();
+    $tok = isset($r['token']) ? (string)$r['token'] : '';
+    $out[] = array(
+      'id'        => $id,
+      'name'      => (isset($r['name']) && trim((string)$r['name']) !== '') ? (string)$r['name'] : $def['name'],
+      'kind'      => $def['kind'],
+      'enabled'   => !empty($r['enabled']) ? 1 : 0,
+      'apiUrl'    => isset($r['apiUrl']) ? (string)$r['apiUrl'] : '',
+      'network'   => isset($r['network']) ? (int)$r['network'] : 1,
+      'store'     => isset($r['store']) ? (string)$r['store'] : '',
+      'hasToken'  => $tok !== '',
+      'tokenTail' => $tok !== '' ? substr($tok, -4) : '',
+    );
+  }
+  return $out;
+}
 /* admin: POST {action:'digylog_admin', op:'get'|'save'|'test'|'dry'} + header X-Sync-Token */
 function crm_dl_admin($b) {
   global $SECRET, $AUDIT_FILE;
@@ -1403,7 +1437,9 @@ function crm_dl_admin($b) {
       'hasToken'  => $t !== '',
       'tokenTail' => $t !== '' ? substr($t, -4) : '',
       'hasSellerToken' => $sellerToken !== '',
-      'sellerTokenTail' => $sellerToken !== '' ? substr($sellerToken, -4) : ''
+      'sellerTokenTail' => $sellerToken !== '' ? substr($sellerToken, -4) : '',
+      'carriers' => crm_dl_carriers($c),
+      'defaultCarrier' => isset($c['defaultCarrier']) ? (string)$c['defaultCarrier'] : ''
     )));
   }
   if ($op === 'api_test') {
@@ -1484,6 +1520,28 @@ function crm_dl_admin($b) {
     }
     if (isset($b['defaultStore'])) $c['defaultStore'] = trim((string)$b['defaultStore']);
     if (isset($b['autoSend'])) $c['autoSend'] = !empty($b['autoSend']) ? 1 : 0;
+    /* v4.0: شركات الشحن */
+    if (isset($b['defaultCarrier'])) {
+      $dc = strtolower(preg_replace('/[^a-zA-Z0-9_]/', '', (string)$b['defaultCarrier']));
+      $allowed = array_keys(crm_dl_carriers_default());
+      $c['defaultCarrier'] = in_array($dc, $allowed, true) ? $dc : '';
+    }
+    if (isset($b['carriers']) && is_array($b['carriers'])) {
+      $saved = (isset($c['carriers']) && is_array($c['carriers'])) ? $c['carriers'] : array();
+      foreach ($b['carriers'] as $cid => $row) {
+        $cid = strtolower(preg_replace('/[^a-zA-Z0-9_]/', '', (string)$cid));
+        if ($cid === '' || !is_array($row)) continue;
+        if (!isset($saved[$cid]) || !is_array($saved[$cid])) $saved[$cid] = array();
+        foreach (array('name','apiUrl','store') as $f) {
+          if (isset($row[$f])) $saved[$cid][$f] = trim((string)$row[$f]);
+        }
+        if (isset($row['network'])) $saved[$cid]['network'] = (int)$row['network'];
+        if (isset($row['enabled'])) $saved[$cid]['enabled'] = !empty($row['enabled']) ? 1 : 0;
+        if (!empty($row['clearToken'])) $saved[$cid]['token'] = '';
+        elseif (isset($row['token']) && trim((string)$row['token']) !== '') $saved[$cid]['token'] = trim((string)$row['token']);
+      }
+      $c['carriers'] = $saved;
+    }
     $en = !empty($b['enabled']) ? 1 : 0;
     if ($en && empty($c['enabled'])) $c['since'] = (int)(microtime(true) * 1000);   // أول تفعيل: غير الطلبيات الجداد
     $c['enabled'] = $en;
@@ -2148,6 +2206,10 @@ function crm_dl_run($dry = false,$forceSentType=null,$includeExisting=false,$wit
     $st = isset($o['statut']) ? (string)$o['statut'] : '';
     if (crm_tracking_norm($st) !== 'confirme') continue;
     if (trim((string)(isset($o['livraison']) ? $o['livraison'] : '')) !== '') continue;   // Suivie فارغ = ما تصيفطاتش بعد
+    /* v4.0 توجيه: ديجيلوك كيصيفط غير اللي مختار ليها هي؛ شركة أخرى ولا بلا شركة => كتبقى */
+    $__car = isset($o['carrier']) ? strtolower(trim((string)$o['carrier'])) : '';
+    if ($__car === '') $__car = strtolower(trim((string)(isset($c['defaultCarrier']) ? $c['defaultCarrier'] : '')));
+    if ($__car !== 'degylog') { $skipped[] = array('id'=>isset($o['id'])?$o['id']:null, 'why'=>'carrier:'.($__car===''?'none':$__car)); continue; }
     $stamp = (isset($o['_f']['statut']) && is_numeric($o['_f']['statut'])) ? (float)$o['_f']['statut'] : 0;
     if (!$includeExisting && !($since > 0 ? ($stamp >= $since) : $dry)) continue;
     $tries = isset($o['dlTries']) ? (int)$o['dlTries'] : 0;$nextTry=isset($o['dlNextTry'])?(int)$o['dlNextTry']:0;
