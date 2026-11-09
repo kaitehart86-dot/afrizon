@@ -177,7 +177,8 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
       var names = {};
       AGENTS.forEach(function (a) { names[a] = 1; });
       (agents || []).forEach(function (a) { if (a) names[a] = 1; });
-      Object.keys(stores || {}).forEach(function (a) { if (a) names[a] = 1; });
+      /* AfrizoN: ما كنعرضوش متاجر قديمة لبنات ما بقاوش فـ CRM — هاكا الحفظ كينقّي الجدول */
+
       var list = Object.keys(names).sort();
       box.innerHTML = '';
       var empty = document.getElementById('storeEmpty');
