@@ -39,7 +39,7 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
 </head>
 <body>
   <div class="top">
-    <h1>⚙️ إعدادات Digylog <span id="apiVer" style="font-size:11px;opacity:.85;font-weight:700"></span></h1>
+    <h1>⚙️ إعدادات Digylog — AfrizoN <span id="apiVer" style="font-size:11px;opacity:.85;font-weight:700"></span></h1>
     <a href="index.html">رجوع للCRM</a>
   </div>
 
@@ -58,13 +58,9 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
         <div class="hint">كيتجاب من /networks (ديك الخانة كتتأكد بزر "اختبار الاتصال")</div>
 
         <label>المتاجر (store) ديال كل بنت</label>
-        <div id="storeBox">
-          <input id="st_Meryam" type="text" placeholder="Meryam" />
-          <input id="st_AYA" type="text" placeholder="AYA" style="margin-top:8px" />
-          <input id="st_imane" type="text" placeholder="imane" style="margin-top:8px" />
-          <input id="st_safa" type="text" placeholder="safa" style="margin-top:8px" />
-        </div>
-        <div class="hint">كل بنت كتحتاج متجر (Boutique) ديالها فـ Digylog. إلا بنت جديدة ما لقيتيش، زيدها من التشخيص.</div>
+        <div id="storeBox"></div>
+        <div class="hint" id="storeEmpty" style="display:none">ما كايناش بنات دابا. زيد البنات من <b>إدارة المستخدمين</b> فـ CRM، ومن بعد رجع لهنا وغادي تلقى خانة لكل واحدة.</div>
+        <div class="hint" id="storeHint">كل بنت كتحتاج متجر (Boutique) ديالها فـ Digylog. إلا بنت جديدة ما لقيتيش، زيدها من التشخيص.</div>
 
         <label for="sentType">وين كيمشيو الطلبيات</label>
         <select id="sentType">
@@ -78,7 +74,7 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
         <div class="hint">هاي هي اللي كتخدم بوحدها: كل طلبية Confirmé و Suivie خاوية كتروح تلقائياً لـ Digylog (Commandes non envoyées) فـ ثواني.</div>
 
         <label for="defaultStore">المتجر (Boutique) الافتراضي</label>
-        <input id="defaultStore" type="text" placeholder="مثال: Slim-Bio-MR" />
+        <input id="defaultStore" type="text" placeholder="مثال: AFZ-Boutique-01" />
         <div class="hint">كيستعمل ملي شي بنت ماعندهاش متجر خاص بيها.</div>
 
         <label class="check"><input id="enabled" type="checkbox" /> تفعيل الإرسال اليدوي (من الصفحة هادي)</label>
@@ -132,8 +128,8 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
   (function () {
     'use strict';
     var TOKEN = '8c907fc0f4ffe0b9775a6b7c3c0fc7700e5724c0d78343df';   // نفس التوكن ديال CRM
-    var AGENTS = ['Meryam', 'AYA', 'imane', 'safa'];
-    var DEFAULT_STORES = { Meryam: 'Slim-Bio-MR', AYA: 'Slim-Bio-Ay', imane: 'Slim-Bio-IM', safa: 'Slim-Bio-Sf' };
+    var AGENTS = [];               /* AfrizoN: كنعتمدو غير على البنات اللي كاينين فـ CRM */
+    var DEFAULT_STORES = {};       /* بلا متاجر قديمة — كل واحدة كتدخل المتجر ديالها */
 
     function isAdmin() {
       try {
@@ -184,6 +180,10 @@ if(t==='dark'){document.documentElement.setAttribute('data-pv-theme','dark');}
       Object.keys(stores || {}).forEach(function (a) { if (a) names[a] = 1; });
       var list = Object.keys(names).sort();
       box.innerHTML = '';
+      var empty = document.getElementById('storeEmpty');
+      var hint = document.getElementById('storeHint');
+      if (empty) empty.style.display = list.length ? 'none' : 'block';
+      if (hint) hint.style.display = list.length ? 'block' : 'none';
       list.forEach(function (a) {
         var inp = document.createElement('input');
         inp.type = 'text';
