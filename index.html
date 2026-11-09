@@ -1379,47 +1379,100 @@ tr[data-ann="1"] input,tr[data-ann="1"] select,tr[data-ann="1"] textarea{text-de
  .pv-pp-dot{animation:none}}
 /*PV-PULSE:END*/
 /*PV-BRAND:BEGIN*/
-/* ===== هوية AI Commerce — شاشة الإقلاع ===== */
+/* ══════════════════════════════════════════════════════════════════
+   AfrizoN — شاشة الإقلاع (تصميم جديد: Aurora + شعار زمردي)
+   ══════════════════════════════════════════════════════════════════ */
 #pv-splash{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;overflow:hidden;
- background:radial-gradient(120% 120% at 50% 0%,#0b1730 0%,#050a14 62%,#03070f 100%);
- transition:opacity .5s ease,visibility .5s ease}
-#pv-splash::before{content:"";position:absolute;inset:-20px;
- background-image:radial-gradient(rgba(148,163,184,.22) 1px,transparent 1px);
- background-size:22px 22px;opacity:.35;
- -webkit-mask-image:radial-gradient(closest-side,#000,transparent 78%);
- mask-image:radial-gradient(closest-side,#000,transparent 78%)}
+  background:radial-gradient(120% 110% at 50% -12%,#0b2038 0%,#060d1a 56%,#03070e 100%);
+  transition:opacity .55s ease,visibility .55s ease}
+#pv-splash::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(78% 68% at 50% 44%,transparent 38%,rgba(0,0,0,.62) 100%)}
 #pv-splash.pvs-out{opacity:0;visibility:hidden}
-.pvs-glow{position:absolute;width:460px;height:460px;border-radius:50%;filter:blur(70px);opacity:.5;pointer-events:none}
-.pvs-g1{top:-140px;left:-120px;background:radial-gradient(circle,#10b981,transparent 68%)}
-.pvs-g2{bottom:-160px;right:-140px;background:radial-gradient(circle,#f59e0b,transparent 68%)}
-.pvs-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px}
-.pvs-badge{position:relative;display:grid;place-items:center;width:132px;height:132px;
- animation:pvsIn .75s cubic-bezier(.2,.8,.25,1) both}
-.pvs-ring{position:absolute;inset:0;border-radius:38px;
- background:conic-gradient(from 0deg,transparent 0 60%,rgba(52,211,153,.9) 76%,rgba(251,191,36,.95) 88%,transparent 100%);
- -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
- -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
- mask-composite:exclude;padding:1.6px;animation:pvsSpin 2.6s linear infinite}
-@keyframes pvsSpin{to{transform:rotate(360deg)}}
-.pvs-mark{width:88px;height:88px;display:block;filter:drop-shadow(0 18px 30px rgba(16,185,129,.42))}
-.pvs-d{animation:pvsBlink 1.8s ease-in-out infinite}
-.pvs-d1{animation-delay:0s}.pvs-d2{animation-delay:.28s}.pvs-d3{animation-delay:.56s}
-@keyframes pvsBlink{0%,72%,100%{opacity:.55}18%{opacity:1}}
-.pvs-word{margin-top:6px;font-size:19px;font-weight:800;letter-spacing:.34em;color:#eef3ff;
- text-indent:.34em;animation:pvsUp .7s .12s ease-out both}
-.pvs-tag{font-size:9px;font-weight:700;letter-spacing:.34em;color:#7f93ae;text-indent:.34em;
- animation:pvsUp .7s .2s ease-out both}
-.pvs-bar{margin-top:16px;width:132px;height:2.5px;border-radius:99px;background:rgba(148,163,184,.18);
- overflow:hidden;animation:pvsUp .7s .26s ease-out both}
-.pvs-bar i{display:block;height:100%;width:0;border-radius:99px;
- background:linear-gradient(90deg,#059669,#34d399 52%,#fbbf24);
- box-shadow:0 0 12px rgba(16,185,129,.85);animation:pvsFill 1.25s .15s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes pvsFill{to{width:100%}}
-@keyframes pvsIn{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
-@keyframes pvsUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* خلفية متحركة */
+.afs-bg{position:absolute;inset:0;overflow:hidden}
+.afs-aurora{position:absolute;border-radius:50%;filter:blur(90px);opacity:.6;will-change:transform}
+.afs-a1{width:62vmax;height:62vmax;left:-20vmax;top:-28vmax;
+  background:radial-gradient(circle,rgba(16,185,129,.55),transparent 62%);
+  animation:afsDrift1 16s ease-in-out infinite alternate}
+.afs-a2{width:56vmax;height:56vmax;right:-18vmax;bottom:-26vmax;
+  background:radial-gradient(circle,rgba(245,158,11,.38),transparent 62%);
+  animation:afsDrift2 18s ease-in-out infinite alternate}
+.afs-a3{width:46vmax;height:46vmax;left:32%;top:26%;
+  background:radial-gradient(circle,rgba(56,189,248,.26),transparent 64%);
+  animation:afsDrift3 20s ease-in-out infinite alternate}
+.afs-grid{position:absolute;inset:0;opacity:.9;
+  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
+  background-size:56px 56px;
+  -webkit-mask-image:radial-gradient(62% 62% at 50% 46%,#000 8%,transparent 86%);
+  mask-image:radial-gradient(62% 62% at 50% 46%,#000 8%,transparent 86%)}
+
+/* الوسط */
+.afs-stage{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:24px}
+.afs-logo{position:relative;display:grid;place-items:center;width:104px;height:104px;margin-bottom:26px;
+  animation:afsPop .8s cubic-bezier(.2,.9,.25,1) both}
+.afs-halo{position:absolute;inset:-34px;border-radius:50%;
+  background:radial-gradient(circle,rgba(16,185,129,.5),rgba(16,185,129,0) 62%);
+  filter:blur(16px);animation:afsPulse 2.4s ease-in-out infinite}
+.afs-orbit{position:absolute;inset:-15px;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0 58%,rgba(251,191,36,.9) 76%,transparent 90%);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 1.7px),#000 calc(100% - 1.5px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 1.7px),#000 calc(100% - 1.5px));
+  animation:afsSpin 3.6s linear infinite}
+.afs-mark{width:92px;height:92px;display:block;
+  filter:drop-shadow(0 18px 34px rgba(16,185,129,.45)) drop-shadow(0 2px 0 rgba(255,255,255,.06))}
+
+.afs-word{font-family:ui-sans-serif,system-ui,"Segoe UI",sans-serif;font-size:28px;font-weight:900;
+  letter-spacing:.32em;text-indent:.32em;line-height:1;
+  background:linear-gradient(100deg,#a7f3d0 0%,#ffffff 34%,#ffffff 58%,#fde68a 80%,#ffffff 100%);
+  background-size:240% 100%;-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  animation:afsRise .75s .1s cubic-bezier(.2,.9,.25,1) both, afsShine 3.4s 1.1s ease-in-out infinite}
+.afs-tag{margin-top:14px;font-size:12.5px;font-weight:700;color:#8ea7c4;line-height:1.8;
+  letter-spacing:0;word-spacing:normal;animation:afsRise .75s .2s cubic-bezier(.2,.9,.25,1) both}
+.afs-divider{display:flex;align-items:center;gap:8px;margin-top:16px;opacity:.75;
+  animation:afsRise .75s .26s cubic-bezier(.2,.9,.25,1) both}
+.afs-divider i{display:block;width:34px;height:1px;background:linear-gradient(90deg,transparent,rgba(148,163,184,.55))}
+.afs-divider i:last-child{background:linear-gradient(90deg,rgba(148,163,184,.55),transparent)}
+.afs-divider b{width:4px;height:4px;border-radius:50%;background:#34d399;box-shadow:0 0 8px rgba(52,211,153,.9)}
+.afs-bar{position:relative;margin-top:26px;width:208px;height:3px;border-radius:99px;
+  background:rgba(148,163,184,.16);overflow:hidden;
+  animation:afsRise .75s .3s cubic-bezier(.2,.9,.25,1) both;
+  box-shadow:0 0 0 1px rgba(255,255,255,.03) inset}
+.afs-bar i{display:block;position:relative;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,#059669,#34d399 48%,#2dd4bf 72%,#fbbf24);
+  box-shadow:0 0 14px rgba(16,185,129,.85);
+  animation:afsFill 1.3s .18s cubic-bezier(.45,0,.2,1) forwards}
+.afs-bar i::after{content:"";position:absolute;inset:0;border-radius:99px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);
+  transform:translateX(-100%);animation:afsSweep 1.1s .5s ease-in-out infinite}
+.afs-meta{margin-top:16px;font-size:9.5px;font-weight:800;letter-spacing:.22em;color:#4d6180;
+  text-indent:.22em;animation:afsRise .75s .38s cubic-bezier(.2,.9,.25,1) both}
+
+@keyframes afsPop{from{opacity:0;transform:scale(.82) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes afsRise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes afsPulse{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:.95;transform:scale(1.06)}}
+@keyframes afsSpin{to{transform:rotate(360deg)}}
+@keyframes afsFill{to{width:100%}}
+@keyframes afsSweep{to{transform:translateX(100%)}}
+@keyframes afsShine{0%{background-position:180% 0}55%,100%{background-position:-60% 0}}
+@keyframes afsDrift1{to{transform:translate3d(6%,8%,0) scale(1.12)}}
+@keyframes afsDrift2{to{transform:translate3d(-7%,-6%,0) scale(1.1)}}
+@keyframes afsDrift3{to{transform:translate3d(-10%,6%,0) scale(1.15)}}
+
+@media (max-width:520px){
+  .afs-logo{width:88px;height:88px;margin-bottom:22px}
+  .afs-mark{width:78px;height:78px}
+  .afs-word{font-size:23px}
+  .afs-tag{font-size:11.5px}
+  .afs-bar{width:170px}
+}
 @media (prefers-reduced-motion:reduce){
- .pvs-ring,.pvs-d,.pvs-badge,.pvs-word,.pvs-tag,.pvs-bar,.pvs-bar i{animation:none!important}
- .pvs-bar i{width:100%}}
+  .afs-aurora,.afs-halo,.afs-orbit,.afs-logo,.afs-word,.afs-tag,.afs-divider,.afs-bar,.afs-meta{animation:none!important}
+  .afs-bar i{width:100%;animation:none!important}
+  .afs-bar i::after{display:none}
+}
 /*PV-BRAND:END*/
 /*PV-HDRLOGO:BEGIN*/
 /* ===== علامة الهيدر (بلاصة الحرف) ===== */
@@ -2135,36 +2188,43 @@ html[data-pv-theme="dark"] .afx-err{background:#2a1215;border-color:#7f1d1d;colo
   <body>
 <!--PV-BRAND-SPLASH:BEGIN-->
 <div id="pv-splash" aria-hidden="true">
-  <div class="pvs-glow pvs-g1"></div>
-  <div class="pvs-glow pvs-g2"></div>
-  <div class="pvs-inner">
-    <div class="pvs-badge">
-      <span class="pvs-ring"></span>
-      <svg class="pvs-mark" viewBox="0 0 48 48" width="88" height="88" role="img" aria-label="AfrizoN">
+  <div class="afs-bg">
+    <span class="afs-aurora afs-a1"></span>
+    <span class="afs-aurora afs-a2"></span>
+    <span class="afs-aurora afs-a3"></span>
+    <span class="afs-grid"></span>
+  </div>
+  <div class="afs-stage">
+    <div class="afs-logo">
+      <span class="afs-halo"></span>
+      <span class="afs-orbit"></span>
+      <svg class="afs-mark" viewBox="0 0 64 64" fill="none" role="img" aria-label="AfrizoN">
         <defs>
-    <linearGradient id="pvsE" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#053f31"/><stop offset=".46" stop-color="#0d9464"/><stop offset="1" stop-color="#34d399"/>
-    </linearGradient>
-    <linearGradient id="pvsGold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#fde68a"/><stop offset=".5" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/>
-    </linearGradient>
-    <radialGradient id="pvsH" cx=".2" cy=".08" r=".95">
-      <stop offset="0" stop-color="#ffffff" stop-opacity=".42"/><stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="48" height="48" rx="13" fill="url(#pvsE)"/>
-  <rect width="48" height="48" rx="13" fill="url(#pvsH)"/>
-  <rect x=".85" y=".85" width="46.3" height="46.3" rx="12.2" fill="none" stroke="url(#pvsGold)" stroke-width="1.2" stroke-opacity=".75"/>
-  <ellipse cx="24" cy="26" rx="17.5" ry="6.4" transform="rotate(-20 24 26)" fill="none" stroke="url(#pvsGold)" stroke-width="1.15" stroke-opacity=".34"/>
-  <circle class="pvs-d pvs-d1" cx="38.6" cy="21.4" r="1.7" fill="#fde68a"/>
-  <path d="M15.4 34.6 24 12.9l8.6 21.7" fill="none" stroke="#ffffff" stroke-width="3.9" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M19.7 28.1h8.6" fill="none" stroke="url(#pvsGold)" stroke-width="3.2" stroke-linecap="round"/>
-
+          <linearGradient id="afsBg" x1="6" y1="1" x2="58" y2="63" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#053f31"/><stop offset=".46" stop-color="#0d9464"/><stop offset="1" stop-color="#34d399"/>
+          </linearGradient>
+          <linearGradient id="afsAw" x1="18" y1="49" x2="46" y2="16" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#ffffff"/><stop offset="1" stop-color="#ecfdf5"/>
+          </linearGradient>
+          <linearGradient id="afsAu" x1="25" y1="37" x2="39" y2="37" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#fbbf24"/><stop offset="1" stop-color="#f59e0b"/>
+          </linearGradient>
+          <radialGradient id="afsSh" cx=".22" cy=".12" r=".92">
+            <stop stop-color="#ffffff" stop-opacity=".34"/><stop offset=".62" stop-color="#ffffff" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <rect width="64" height="64" rx="17" fill="url(#afsBg)"/>
+        <rect width="64" height="64" rx="17" fill="url(#afsSh)"/>
+        <rect x=".85" y=".85" width="62.3" height="62.3" rx="16.2" fill="none" stroke="#ffffff" stroke-opacity=".26" stroke-width="1.4"/>
+        <path d="M19.4 47.6 32 17.2l12.6 30.4" fill="none" stroke="url(#afsAw)" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity=".97"/>
+        <path d="M25.8 37.6h12.4" fill="none" stroke="url(#afsAu)" stroke-width="4.6" stroke-linecap="round"/>
       </svg>
     </div>
-    <div class="pvs-word">AFRIZON</div>
-    <div class="pvs-tag">AI&nbsp;COMMERCE&nbsp;OS</div>
-    <div class="pvs-bar"><i></i></div>
+    <div class="afs-word">AfrizoN</div>
+    <div class="afs-tag">منصة إدارة الطلبات والمخزون</div>
+    <div class="afs-divider"><i></i><b></b><i></i></div>
+    <div class="afs-bar"><i></i></div>
+    <div class="afs-meta">CRM · V3.94</div>
   </div>
 </div>
 <script id="pv-brand-mark-global">window.__pvBrandMark = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-hidden="true"><defs>     <linearGradient id="pvmE" x1="0" y1="0" x2="1" y2="1">       <stop offset="0" stop-color="#053f31"/><stop offset=".46" stop-color="#0d9464"/><stop offset="1" stop-color="#34d399"/>     </linearGradient>     <linearGradient id="pvmGold" x1="0" y1="0" x2="1" y2="1">       <stop offset="0" stop-color="#fde68a"/><stop offset=".5" stop-color="#fbbf24"/><stop offset="1" stop-color="#d97706"/>     </linearGradient>     <radialGradient id="pvmH" cx=".2" cy=".08" r=".95">       <stop offset="0" stop-color="#ffffff" stop-opacity=".42"/><stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>     </radialGradient>   </defs>   <rect width="48" height="48" rx="13" fill="url(#pvmE)"/>   <rect width="48" height="48" rx="13" fill="url(#pvmH)"/>   <rect x=".85" y=".85" width="46.3" height="46.3" rx="12.2" fill="none" stroke="url(#pvmGold)" stroke-width="1.2" stroke-opacity=".75"/>   <ellipse cx="24" cy="26" rx="17.5" ry="6.4" transform="rotate(-20 24 26)" fill="none" stroke="url(#pvmGold)" stroke-width="1.15" stroke-opacity=".34"/>   <circle  cx="38.6" cy="21.4" r="1.7" fill="#fde68a"/>   <path d="M15.4 34.6 24 12.9l8.6 21.7" fill="none" stroke="#ffffff" stroke-width="3.9" stroke-linecap="round" stroke-linejoin="round"/>   <path d="M19.7 28.1h8.6" fill="none" stroke="url(#pvmGold)" stroke-width="3.2" stroke-linecap="round"/> </svg>';</script>
