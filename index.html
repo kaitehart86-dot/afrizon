@@ -2323,6 +2323,97 @@ html[data-pv-theme="dark"] #root thead th{background:linear-gradient(180deg,#122
 html[data-pv-theme="dark"] #root tbody td{border-color:#1e2c42 !important}
 html[data-pv-theme="dark"] #root .border-slate-200{border-color:#21314a !important}
 
+
+/* ══════════════════════════════════════════════════════════════════════
+   AfrizoN — هيكل جديد: Sidebar على اليمين (RTL) + محتوى عريض
+   ══════════════════════════════════════════════════════════════════════ */
+@media (min-width: 1024px){
+  /* المحتوى كياخد بلاصة السايدبار */
+  #root > div.flex.h-dvh.bg-slate-100{padding-inline-start:272px !important}
+
+  /* الهيدر كيولي سايدبار ثابت */
+  #root > div.flex.h-dvh.bg-slate-100 > header{
+    position:fixed !important;inset-block:0 !important;inset-inline-start:0 !important;
+    width:272px !important;height:100dvh !important;z-index:70;
+    display:flex !important;flex-direction:column !important;
+    background:radial-gradient(120% 90% at 100% 0%,#17497a 0%,#0d2745 46%,#07152b 100%) !important;
+    border:0 !important;border-inline-end:1px solid rgba(255,255,255,.09) !important;
+    box-shadow:18px 0 50px -40px rgba(0,0,0,.9) !important;
+    overflow:hidden !important;padding:0 !important;
+  }
+  /* لوكاب AfrizoN فوق السايدبار */
+  #root > div.flex.h-dvh.bg-slate-100 > header::before{
+    content:"AfrizoN";flex:none;display:flex;align-items:center;height:76px;padding-inline:22px;
+    color:#fff;font-family:ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+    font-weight:900;font-size:19px;letter-spacing:.2em;
+    background:
+      radial-gradient(120px 60px at 18% 50%,rgba(16,185,129,.28),transparent 70%),
+      linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0));
+    border-bottom:1px solid rgba(255,255,255,.08);
+    text-shadow:0 2px 14px rgba(16,185,129,.45);
+  }
+
+  /* منطقة التنقل */
+  #root > div.flex.h-dvh.bg-slate-100 > header > nav{
+    direction:rtl !important;flex:1 1 auto !important;min-height:0 !important;
+    display:flex !important;margin:0 !important;overflow:hidden !important;
+  }
+  #root > div.flex.h-dvh.bg-slate-100 > header > nav > .pv-main-nav{
+    flex-direction:column !important;align-items:stretch !important;
+    width:100% !important;height:auto !important;min-height:100% !important;
+    margin:0 !important;padding:10px 12px 18px !important;gap:3px !important;
+    background:transparent !important;border:0 !important;border-radius:0 !important;
+    box-shadow:none !important;overflow-y:auto !important;overflow-x:hidden !important;
+    scrollbar-width:thin;
+  }
+  #root > div.flex.h-dvh.bg-slate-100 .pv-main-nav > div{
+    position:relative;width:100% !important;height:42px !important;flex:none;
+    justify-content:flex-start !important;gap:10px !important;
+    padding:0 12px !important;border-radius:11px !important;
+    background:transparent !important;background-image:none !important;
+    border:1px solid transparent !important;
+    color:#a9bed8 !important;font-size:13px !important;font-weight:700 !important;
+    box-shadow:none !important;--tw-ring-shadow:0 0 #0000 !important;
+  }
+  #root > div.flex.h-dvh.bg-slate-100 .pv-main-nav > div > span:first-child{
+    width:22px !important;text-align:center !important;font-size:15px !important;flex:none;
+  }
+  #root > div.flex.h-dvh.bg-slate-100 .pv-main-nav > div:hover{
+    background:rgba(255,255,255,.07) !important;color:#ffffff !important;transform:none !important;
+  }
+  #root > div.flex.h-dvh.bg-slate-100 .pv-main-nav > div[class*="border-white/40"]{
+    background:linear-gradient(90deg,rgba(16,185,129,.26),rgba(45,212,191,.10)) !important;
+    border-color:rgba(52,211,153,.30) !important;color:#ffffff !important;
+    box-shadow:0 10px 22px -16px rgba(16,185,129,.9) !important;
+  }
+  #root > div.flex.h-dvh.bg-slate-100 .pv-main-nav > div[class*="border-white/40"]::after{
+    content:"";position:absolute;inset-inline-start:-12px;top:50%;transform:translateY(-50%);
+    width:4px;height:22px;border-radius:0 4px 4px 0;
+    background:linear-gradient(180deg,#34d399,#fbbf24);
+  }
+
+  /* أدوات الحساب تحت السايدبار */
+  #root > div.flex.h-dvh.bg-slate-100 > header > .pv-admin-top{
+    order:99;flex:none;flex-wrap:wrap;gap:8px !important;
+    margin:0 !important;padding:12px !important;
+    border-top:1px solid rgba(255,255,255,.09);
+    background:rgba(0,0,0,.18);
+  }
+  #root > div.flex.h-dvh.bg-slate-100 > header > .pv-admin-top > div:nth-child(2){display:none !important}
+  #root > div.flex.h-dvh.bg-slate-100 > header > .pv-admin-top .pv-admin-tools{margin:0 !important;width:100%;flex-wrap:wrap;gap:8px}
+  #root > div.flex.h-dvh.bg-slate-100 > header > .pv-admin-top .pv-admin-period{width:100%}
+  #root > div.flex.h-dvh.bg-slate-100 > header > .pv-admin-top button{border-radius:11px !important}
+
+  /* خلفية المحتوى */
+  #root > div.flex.h-dvh.bg-slate-100{background:
+    radial-gradient(900px 460px at 100% -10%,rgba(16,185,129,.08),transparent 60%),
+    linear-gradient(180deg,#f7fafd,#f1f5fb) !important}
+}
+
+/* موبايل/تابليت: نرجعو للشريط الأفقي */
+@media (max-width: 1023px){
+  #root .pv-main-nav{border-radius:14px !important}
+}
 </style>
 </head>
   <body>
